@@ -677,7 +677,7 @@
       <div class="px-5 sm:px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
         <div>
           <h3 class="text-base sm:text-lg font-extrabold">Simulasi Scan QR Surat Undangan Pemilih (DPT Desa Gembor)</h3>
-          <p class="text-xs text-slate-300">Pilih salah satu Surat Undangan DPT di bawah untuk memindai QR ke Bilik 1</p>
+          <p class="text-xs text-slate-300">Pilih salah satu Surat Undangan DPT di bawah untuk memindai QR (dapat dipindai berulang kali)</p>
         </div>
         <button
           type="button"
@@ -1540,11 +1540,11 @@
 
     // Daftar Pemilih Tetap (DPT)
     const DEFAULT_VOTERS = [
-      { dptNo: '001', name: 'ADEN ARYA', nik: '3213041505950001', qrCode: 'PILKADES-GEMBOR-TPS01-DPT001-3213041505950001', hasVoted: false, votedAt: null },
-      { dptNo: '002', name: 'AGET', nik: '3213045208910002', qrCode: 'PILKADES-GEMBOR-TPS01-DPT002-3213045208910002', hasVoted: false, votedAt: null },
-      { dptNo: '003', name: 'M. RAIHAN', nik: '3213041003840003', qrCode: 'PILKADES-GEMBOR-TPS01-DPT003-3213041003840003', hasVoted: false, votedAt: null },
-      { dptNo: '004', name: 'ANDRE', nik: '3213046411930004', qrCode: 'PILKADES-GEMBOR-TPS01-DPT004-3213046411930004', hasVoted: false, votedAt: null },
-      { dptNo: '005', name: 'INTAN', nik: '3213040709870005', qrCode: 'PILKADES-GEMBOR-TPS01-DPT005-3213040709870005', hasVoted: false, votedAt: null }
+      { dptNo: '001', name: 'ADEN ARYA', nik: '3213041505950001', qrCode: 'PILKADES-GEMBOR-TPS01-DPT001-3213041505950001', hasVoted: false, votedAt: null, voteCount: 0 },
+      { dptNo: '002', name: 'AGET', nik: '3213045208910002', qrCode: 'PILKADES-GEMBOR-TPS01-DPT002-3213045208910002', hasVoted: false, votedAt: null, voteCount: 0 },
+      { dptNo: '003', name: 'M. RAIHAN', nik: '3213041003840003', qrCode: 'PILKADES-GEMBOR-TPS01-DPT003-3213041003840003', hasVoted: false, votedAt: null, voteCount: 0 },
+      { dptNo: '004', name: 'ANDRE', nik: '3213046411930004', qrCode: 'PILKADES-GEMBOR-TPS01-DPT004-3213046411930004', hasVoted: false, votedAt: null, voteCount: 0 },
+      { dptNo: '005', name: 'INTAN', nik: '3213040709870005', qrCode: 'PILKADES-GEMBOR-TPS01-DPT005-3213040709870005', hasVoted: false, votedAt: null, voteCount: 0 }
     ];
 
     let appState = {
@@ -2171,7 +2171,8 @@
             nik: `3213040101900${nextNum}`,
             qrCode: `PILKADES-GEMBOR-TPS01-DPT${nextNum}-3213040101900${nextNum}`,
             hasVoted: false,
-            votedAt: null
+            votedAt: null,
+            voteCount: 0
           });
           saveState(false);
         }
@@ -2343,9 +2344,10 @@
               remote.voters.forEach(rv => {
                 const existing = mergedVoters.find(lv => lv.dptNo === rv.dptNo);
                 if (existing) {
-                  if (rv.hasVoted && !existing.hasVoted) {
+                  if (rv.hasVoted) {
                     existing.hasVoted = true;
-                    existing.votedAt = rv.votedAt;
+                    existing.votedAt = rv.votedAt || existing.votedAt;
+                    existing.voteCount = Math.max(Number(existing.voteCount) || 0, Number(rv.voteCount) || 1);
                   }
                 } else {
                   mergedVoters.push(rv);
@@ -2505,7 +2507,7 @@
 
     function buildOfflineSyncPayload() {
       const compact = {
-        v: appState.voters.filter(v => v.hasVoted).map(v => ({ d: v.dptNo, t: v.votedAt })),
+        v: appState.voters.filter(v => v.hasVoted).map(v => ({ d: v.dptNo, t: v.votedAt, vc: v.voteCount || 1 })),
         c: appState.candidates.map(c => ({ i: c.id, v: c.votes })),
         a: appState.auditLogs
       };
@@ -2574,9 +2576,10 @@
         if (Array.isArray(data.v)) {
           data.v.forEach(item => {
             const voter = appState.voters.find(v => v.dptNo === item.d);
-            if (voter && !voter.hasVoted) {
+            if (voter) {
               voter.hasVoted = true;
               voter.votedAt = item.t || new Date().toLocaleString('id-ID') + ' WIB';
+              voter.voteCount = Math.max(Number(voter.voteCount) || 0, Number(item.vc) || 1);
             }
           });
         }
@@ -2862,7 +2865,7 @@
         return;
       }
 
-      // Pencocokan QR Undangan DPT Pemilih
+      // Pencocokan QR Undangan DPT Pemilih (Diizinkan untuk dipindai berulang kali)
       const voter = appState.voters.find(
         v => v.qrCode === trimmed || v.dptNo === trimmed || v.nik === trimmed
       );
@@ -2870,18 +2873,6 @@
       if (!voter) {
         playSound('error');
         showToast('QR Code Tidak Dikenali', `Kode QR tidak terdaftar dalam DPT Desa Gembor ${ELECTION_META.tps}.`, 'error');
-        return;
-      }
-
-      if (voter.hasVoted) {
-        playSound('error');
-        document.getElementById('scanner-status-text').innerHTML =
-          `<span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500"></span><span class="text-red-400">DITOLAK: QR Code No. DPT ${voter.dptNo} sudah digunakan!</span>`;
-        showToast(
-          'Akses Ditolak — Sudah Memilih',
-          `Surat Undangan No. DPT ${voter.dptNo} (${voter.name}) telah digunakan pada ${voter.votedAt}.`,
-          'error'
-        );
         return;
       }
 
@@ -2917,10 +2908,9 @@
       list.innerHTML = '';
 
       appState.voters.forEach((voter) => {
+        const scanCount = Number(voter.voteCount) || (voter.hasVoted ? 1 : 0);
         const card = document.createElement('div');
-        card.className = `rounded-xl border-2 p-4 bg-white shadow-sm flex flex-col justify-between transition ${
-          voter.hasVoted ? 'border-slate-200 opacity-75' : 'border-slate-300 hover:border-blue-600'
-        }`;
+        card.className = 'rounded-xl border-2 p-4 bg-white shadow-sm flex flex-col justify-between transition border-slate-300 hover:border-blue-600';
 
         card.innerHTML = `
           <div>
@@ -2945,8 +2935,15 @@
                 ${generateDeterministicQrSVG(voter.qrCode)}
               </div>
               <div class="min-w-0 flex-1 space-y-1">
-                <div class="inline-block px-2 py-0.5 text-[9px] font-bold text-red-700 border border-red-400 bg-red-50 rounded">
-                  SURAT UNDANGAN INI BERSIFAT RAHASIA
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="inline-block px-2 py-0.5 text-[9px] font-bold text-red-700 border border-red-400 bg-red-50 rounded">
+                    SURAT UNDANGAN INI BERSIFAT RAHASIA
+                  </span>
+                  ${
+                    scanCount > 0
+                      ? `<span class="inline-block px-2 py-0.5 text-[9px] font-extrabold text-emerald-800 bg-emerald-100 rounded">Dipindai ${scanCount}x</span>`
+                      : ''
+                  }
                 </div>
                 <div class="text-xs text-slate-600">Nama Pemilih:</div>
                 <div class="text-sm font-extrabold text-slate-900 uppercase truncate">${voter.name}</div>
@@ -2963,23 +2960,13 @@
             >
               Lihat Surat
             </button>
-            ${
-              voter.hasVoted
-                ? `<button
-                    type="button"
-                    onclick="closeSimModal(); processScannedQrPayload('${voter.qrCode}')"
-                    class="px-3.5 py-1.5 rounded-lg bg-red-100 text-red-700 text-xs font-bold cursor-pointer"
-                  >
-                    Sudah Memilih (Uji Tolak)
-                  </button>`
-                : `<button
-                    type="button"
-                    onclick="closeSimModal(); processScannedQrPayload('${voter.qrCode}')"
-                    class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-xs transition cursor-pointer"
-                  >
-                    Scan QR Ini &rarr;
-                  </button>`
-            }
+            <button
+              type="button"
+              onclick="closeSimModal(); processScannedQrPayload('${voter.qrCode}')"
+              class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-xs transition cursor-pointer"
+            >
+              ${scanCount > 0 ? 'Scan Ulang QR &rarr;' : 'Scan QR Ini &rarr;'}
+            </button>
           </div>
         `;
         list.appendChild(card);
@@ -3070,20 +3057,14 @@
       container.innerHTML = `<div id="printable-invitation-sheet">${buildInvitationSheetHTML(voter)}</div>`;
 
       const scanBtn = document.getElementById('btn-scan-from-preview');
-      if (voter.hasVoted) {
-        scanBtn.textContent = 'Sudah Digunakan Memilih';
-        scanBtn.className = 'px-4 py-2 rounded-xl bg-slate-300 text-slate-600 text-xs sm:text-sm font-bold cursor-not-allowed';
-        scanBtn.onclick = null;
-      } else {
-        scanBtn.textContent = 'Scan QR Ini Sekarang';
-        scanBtn.className = 'px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold shadow transition cursor-pointer';
-        scanBtn.onclick = () => {
-          closeInvitationPreview();
-          closeSimModal();
-          closeAdminModal();
-          processScannedQrPayload(voter.qrCode);
-        };
-      }
+      scanBtn.textContent = 'Scan QR Ini Sekarang';
+      scanBtn.className = 'px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold shadow transition cursor-pointer';
+      scanBtn.onclick = () => {
+        closeInvitationPreview();
+        closeSimModal();
+        closeAdminModal();
+        processScannedQrPayload(voter.qrCode);
+      };
 
       document.getElementById('modal-invitation-preview').classList.remove('hidden');
     }
@@ -3206,7 +3187,7 @@
       if (!activeVoter || !selectedCandidateId) return;
       const cand = appState.candidates.find(c => c.id === selectedCandidateId);
       const voter = appState.voters.find(v => v.dptNo === activeVoter.dptNo);
-      if (!cand || !voter || voter.hasVoted) return;
+      if (!cand || !voter) return;
 
       const hash1 = generateHexHash(8);
       const hash2 = generateHexHash(8);
@@ -3220,6 +3201,7 @@
 
       cand.votes += 1;
       voter.hasVoted = true;
+      voter.voteCount = (Number(voter.voteCount) || 0) + 1;
       voter.votedAt = nowStr;
 
       const auditEntry = {
@@ -3577,7 +3559,7 @@
         ...appState.candidates.map(c => `${c.number},"${c.name}",${c.votes}`),
         '',
         'NO DPT,NAMA PEMILIH,NIK,STATUS MEMILIH,WAKTU MEMILIH',
-        ...appState.voters.map(v => `${v.dptNo},"${v.name}","'${v.nik}",${v.hasVoted ? 'SUDAH MEMILIH' : 'BELUM MEMILIH'},"${v.votedAt || '-'}"`)
+        ...appState.voters.map(v => `${v.dptNo},"${v.name}","'${v.nik}",${v.hasVoted ? `SUDAH MEMILIH (${v.voteCount || 1}x)` : 'BELUM MEMILIH'},"${v.votedAt || '-'}"`)
       ];
       const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -3614,7 +3596,8 @@
         nik,
         qrCode: `PILKADES-GEMBOR-TPS01-DPT${dptNo}-${nik}`,
         hasVoted: false,
-        votedAt: null
+        votedAt: null,
+        voteCount: 0
       });
       saveState();
       renderAdminDptTable();
@@ -3644,7 +3627,8 @@
               nik,
               qrCode: `PILKADES-GEMBOR-TPS01-DPT${dptNo}-${nik}`,
               hasVoted: false,
-              votedAt: null
+              votedAt: null,
+              voteCount: 0
             });
             added++;
           }
@@ -3688,6 +3672,7 @@
       }
 
       filtered.forEach(voter => {
+        const countLabel = Number(voter.voteCount) > 1 ? ` (${voter.voteCount}x)` : '';
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
@@ -3698,7 +3683,7 @@
             ${
               voter.hasVoted
                 ? `<div>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Sudah Memilih</span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Sudah Memilih${countLabel}</span>
                     <div class="text-[10px] text-slate-400 mt-0.5">${voter.votedAt || ''}</div>
                   </div>`
                 : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Belum Memilih</span>`
@@ -3718,9 +3703,9 @@
                     type="button"
                     onclick="unlockVoterQr('${voter.dptNo}')"
                     class="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs transition cursor-pointer"
-                    title="Buka kembali status QR pemilih"
+                    title="Reset riwayat pemindaian pemilih"
                   >
-                    Buka Blokir
+                    Reset Status
                   </button>`
                 : `<button
                     type="button"
@@ -3741,10 +3726,11 @@
       if (!voter) return;
       voter.hasVoted = false;
       voter.votedAt = null;
+      voter.voteCount = 0;
       saveState();
       renderAdminDptTable();
       renderAdminRealCount();
-      showToast('Status DPT Diperbarui', `QR Undangan DPT #${dptNo} (${voter.name}) dibuka kembali.`, 'info');
+      showToast('Status DPT Diperbarui', `Status pemilihan DPT #${dptNo} (${voter.name}) direset.`, 'info');
     }
 
     function removeDptVoter(dptNo) {
