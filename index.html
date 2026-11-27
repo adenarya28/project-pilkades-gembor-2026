@@ -229,9 +229,9 @@
     </header>
 
     <!-- Main Dark Camera Viewport -->
-    <main class="relative flex-1 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950 p-4">
-      <!-- Live Webcam Video Element -->
-      <video id="qr-video" class="hidden absolute inset-0 w-full h-full object-cover" playsinline muted></video>
+    <main id="scanner-viewport-area" class="relative flex-1 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950 p-4">
+      <!-- Live Webcam Video Element (Autoplay Standby) -->
+      <video id="qr-video" class="hidden absolute inset-0 w-full h-full object-cover" autoplay playsinline muted></video>
       <canvas id="qr-canvas" class="hidden"></canvas>
 
       <!-- Subtle Ambient Grid Background when Camera Off -->
@@ -288,7 +288,7 @@
       </div>
       <div id="scanner-status-text" class="mx-auto sm:mx-0 font-semibold text-slate-200 tracking-wide flex items-center gap-2">
         <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-        <span>Mencari kode QR undangan...</span>
+        <span>Menyiapkan kamera pemindai...</span>
       </div>
       <div id="scanner-clock" class="font-mono text-slate-400 hidden sm:block">08:00:00 WIB</div>
     </footer>
@@ -843,16 +843,16 @@
         <!-- 4 Tab Navigasi Panitia -->
         <div class="flex border-b border-slate-200 bg-slate-50 px-4 overflow-x-auto shrink-0">
           <button type="button" onclick="switchAdminTab('realcount')" id="tab-btn-realcount" class="admin-tab-btn px-4 py-3 text-xs sm:text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer">
-            1. Real Count &amp; Berita Acara
+1. Real Count &amp; Berita Acara
           </button>
           <button type="button" onclick="switchAdminTab('dpt')" id="tab-btn-dpt" class="admin-tab-btn px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer">
-            2. Manajemen DPT &amp; Undangan
+2. Manajemen DPT &amp; Undangan
           </button>
           <button type="button" onclick="switchAdminTab('audit')" id="tab-btn-audit" class="admin-tab-btn px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer">
-            3. Audit Kotak Suara
+3. Audit Kotak Suara
           </button>
           <button type="button" onclick="switchAdminTab('settings')" id="tab-btn-settings" class="admin-tab-btn px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer">
-            4. Pengaturan TPS &amp; Kandidat
+4. Pengaturan TPS &amp; Kandidat
           </button>
         </div>
 
@@ -1260,7 +1260,7 @@
           onclick="switchSyncBridgeTab('cloud')"
           class="px-4 py-3 text-xs sm:text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer"
         >
-          1. Real-Time Otomatis (Wi-Fi / Internet)
+1. Real-Time Otomatis (Wi-Fi / Internet)
         </button>
         <button
           type="button"
@@ -1268,7 +1268,7 @@
           onclick="switchSyncBridgeTab('offline')"
           class="px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer"
         >
-          2. Transfer Cepat Tanpa Internet (QR / Kode Bilik)
+2. Transfer Cepat Tanpa Internet (QR / Kode Bilik)
         </button>
       </div>
 
@@ -1348,7 +1348,7 @@
                   Langkah 2: Hubungkan Tablet Sekali Pindai
                 </div>
                 <p class="text-[11px] text-slate-600 mt-1">
-                  Buka aplikasi ini di <strong>Tablet</strong>, tekan <strong>Aktifkan Kamera</strong> pada layar awal pemindai QR utama, lalu arahkan ke QR Code di bawah ini:
+                  Buka aplikasi ini di <strong>Tablet</strong> (kamera langsung standby di layar utama), lalu arahkan ke QR Code di bawah ini:
                 </p>
               </div>
 
@@ -1389,7 +1389,7 @@
             <!-- Kolom Kiri: Kirim Data dari Tablet -->
             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-3">
               <div class="text-xs font-extrabold uppercase tracking-wider text-slate-800">
-                1. Dari Tablet (Bilik Suara) &rarr; Kirim Data
+1. Dari Tablet (Bilik Suara) &rarr; Kirim Data
               </div>
               <p class="text-[11px] text-slate-600">
                 Tampilkan QR Code ini di layar <strong>Tablet</strong> untuk dipindai oleh Laptop Panitia:
@@ -1421,7 +1421,7 @@
             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-3">
               <div class="space-y-2">
                 <div class="text-xs font-extrabold uppercase tracking-wider text-slate-800 text-center">
-                  2. Di Laptop (Panitia) &rarr; Terima Data Masuk
+2. Di Laptop (Panitia) &rarr; Terima Data Masuk
                 </div>
                 <p class="text-[11px] text-slate-600 text-center">
                   Pindai QR Code dari layar Tablet menggunakan kamera Laptop, atau tempel kode paket di bawah:
@@ -1429,7 +1429,7 @@
 
                 <!-- Mini Kamera Scanner di Modal Panitia -->
                 <div class="relative rounded-xl overflow-hidden bg-slate-900 border border-slate-700 flex flex-col items-center justify-center min-h-[140px]">
-                  <video id="sync-qr-video" class="hidden w-full h-44 object-cover" playsinline muted></video>
+                  <video id="sync-qr-video" class="hidden w-full h-44 object-cover" autoplay playsinline muted></video>
                   <canvas id="sync-qr-canvas" class="hidden"></canvas>
                   <div id="sync-qr-placeholder" class="p-4 text-center space-y-2">
                     <button
@@ -1480,7 +1480,7 @@
         </span>
         <h4 class="text-lg font-black text-slate-900 mt-1.5">Arahkan Kamera Tablet ke Sini</h4>
         <p class="text-xs text-slate-600 mt-0.5">
-          Gunakan fitur <strong>Aktifkan Kamera</strong> di layar utama Tablet untuk memindai kode QR ini.
+          Kamera pada layar utama Tablet langsung standby untuk memindai kode QR ini.
         </p>
       </div>
 
@@ -1558,6 +1558,7 @@
     let selectedCandidateId = null;
     let cameraStream = null;
     let cameraAnimFrame = null;
+    let isStartingCamera = false;
     let isScanningCooldown = false;
     let preferredFacingMode = 'environment';
     let isAdminUnlocked = false;
@@ -1569,7 +1570,6 @@
     // =========================================================================
     function buildOfflineIsoQrMatrix(text) {
       const bytes = Array.from(new TextEncoder().encode(text));
-      // Kapasitas data Byte mode Level L untuk versi 1..12
       const versionCaps = [0, 17, 32, 53, 78, 106, 134, 154, 192, 230, 271, 321, 367];
       const ecCodewordsPerBlock = [0, 7, 10, 15, 20, 26, 18, 20, 24, 30, 18, 20, 24];
       const numBlocks = [0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4, 4];
@@ -1585,7 +1585,6 @@
       const blocks = numBlocks[version];
       const size = version * 4 + 17;
 
-      // Bit buffer: Mode 0100 (Byte), length (8 or 16 bit), data, terminator, padding
       const bits = [];
       const pushBits = (val, len) => {
         for (let i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1);
@@ -1609,7 +1608,6 @@
         padIdx++;
       }
 
-      // GF(256) arithmetic for Reed-Solomon ECC
       const gfExp = new Uint8Array(512);
       const gfLog = new Uint8Array(256);
       let x = 1;
@@ -1646,7 +1644,6 @@
         return rem;
       };
 
-      // Split into blocks & interleave
       const shortBlocks = blocks - (totalDataCap % blocks);
       const shortLen = Math.floor(totalDataCap / blocks);
       const dataBlocks = [];
@@ -1697,7 +1694,6 @@
       drawFinder(0, size - 7);
       drawFinder(size - 7, 0);
 
-      // Alignment patterns
       const alignCoords = {
         2: [6, 18], 3: [6, 22], 4: [6, 26], 5: [6, 30], 6: [6, 34],
         7: [6, 22, 38], 8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50],
@@ -1714,14 +1710,12 @@
         }
       }
 
-      // Timing & dark module
       for (let i = 8; i < size - 8; i++) {
         setFunc(6, i, i % 2 === 0);
         setFunc(i, 6, i % 2 === 0);
       }
       setFunc(size - 8, 8, true);
 
-      // Reserve format & version info
       for (let i = 0; i < 9; i++) {
         if (i !== 6) {
           setFunc(8, i, false);
@@ -1741,7 +1735,6 @@
         }
       }
 
-      // Place data bits zigzag (Mask 0: (r + c) % 2 === 0)
       let bitIdx = 0;
       const totalBits = finalStream.length * 8;
       let upward = true;
@@ -1764,7 +1757,6 @@
         upward = !upward;
       }
 
-      // Format info for ECC Level L (01) + Mask 0 (000) -> 0x77c4
       const fmt = 0x77c4;
       for (let i = 0; i <= 5; i++) setFunc(8, i, ((fmt >>> i) & 1) === 1);
       setFunc(8, 7, ((fmt >>> 6) & 1) === 1);
@@ -1878,7 +1870,6 @@
 
       if (LOCAL_ASSETS.background) {
         container.style.backgroundImage = `url('${LOCAL_ASSETS.background}'), var(--ballot-ornament)`;
-        // Baca rasio asli gambar latar agar kotak putih menyesuaikan proporsi latar secara presisi
         const probeImg = new Image();
         probeImg.onload = function () {
           if (probeImg.naturalWidth > 0 && probeImg.naturalHeight > 0 && window.innerWidth >= 768) {
@@ -2112,7 +2103,6 @@
 
     function loadState() {
       try {
-        // Bersihkan kunci penyimpanan versi sebelumnya (v4) agar PIN & jadwal baru langsung aktif
         localStorage.removeItem('pilkades_gembor_subang_2026_2034_v4');
 
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -2142,7 +2132,6 @@
         // Fallback ke state default
       }
 
-      // Cek parameter URL (?nama=... atau ?sync=...)
       const urlParams = new URLSearchParams(window.location.search);
       const syncParam = urlParams.get('sync');
       if (syncParam) {
@@ -2706,54 +2695,112 @@
         target.classList.remove('hidden');
         target.classList.add('flex');
       }
-      if (screenName !== 'scanner') {
+      if (screenName === 'scanner') {
+        if (!cameraStream) {
+          startCameraScanner(true);
+        }
+      } else {
         stopCameraScanner();
       }
     }
 
     // =========================================================================
-    // LAYAR 1: PEMINDAI QR CODE (WEBCAM & SIMULASI DPT)
+    // LAYAR 1: PEMINDAI QR CODE (STANDBY OTOMATIS, WEBCAM & SIMULASI DPT)
     // =========================================================================
-    async function toggleCameraScanner() {
+    function bindTapToActivateCameraFallback() {
+      const scannerEl = document.getElementById('screen-scanner');
+      if (!scannerEl || scannerEl.dataset.tapFallbackBound === '1') return;
+      scannerEl.dataset.tapFallbackBound = '1';
+
+      const onUserTap = (ev) => {
+        if (cameraStream || isStartingCamera) return;
+        if (ev.target && ev.target.closest('button')) return;
+        startCameraScanner(false);
+      };
+
+      scannerEl.addEventListener('click', onUserTap, { once: true });
+      scannerEl.addEventListener('touchstart', onUserTap, { once: true, passive: true });
+    }
+
+    async function startCameraScanner(isAutoStart = false) {
+      if (cameraStream || isStartingCamera) return;
+
       const btn = document.getElementById('btn-toggle-camera');
       const switchBtn = document.getElementById('btn-switch-camera');
       const video = document.getElementById('qr-video');
       const bgPlaceholder = document.getElementById('camera-placeholder-bg');
+      const statusEl = document.getElementById('scanner-status-text');
 
-      if (cameraStream) {
-        stopCameraScanner();
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-amber-400"></span><span>Browser tidak mendukung kamera otomatis • Gunakan Simulasi Scan QR</span>`;
+        }
         return;
       }
 
+      isStartingCamera = true;
+      if (statusEl) {
+        statusEl.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span><span>Mengaktifkan kamera standby...</span>`;
+      }
+
       try {
+        let stream = null;
         try {
-          cameraStream = await navigator.mediaDevices.getUserMedia({
+          stream = await navigator.mediaDevices.getUserMedia({
             video: {
               facingMode: { ideal: preferredFacingMode },
               width: { ideal: 1280 },
               height: { ideal: 720 }
-            }
+            },
+            audio: false
           });
         } catch (firstErr) {
-          cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+          stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
         }
 
+        // Jika pengguna sudah pindah dari layar scanner saat kamera masih loading, matikan stream
+        const isScannerVisible = !document.getElementById('screen-scanner').classList.contains('hidden');
+        if (!isScannerVisible) {
+          stream.getTracks().forEach(t => t.stop());
+          isStartingCamera = false;
+          return;
+        }
+
+        cameraStream = stream;
         video.srcObject = cameraStream;
         await video.play();
         video.classList.remove('hidden');
         bgPlaceholder.classList.add('hidden');
-        btn.textContent = 'Tutup pemindai';
+        if (btn) btn.textContent = 'Matikan Kamera';
         if (switchBtn) switchBtn.classList.remove('hidden');
-        document.getElementById('scanner-status-text').innerHTML =
-          `<span class="inline-block w-2 h-2 rounded-full bg-lime-400 animate-ping"></span><span>Kamera Aktif • Arahkan QR ke dalam kotak...</span>`;
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-lime-400 animate-ping"></span><span>Kamera Standby • Arahkan QR ke dalam kotak...</span>`;
+        }
         requestAnimationFrame(scanVideoFrame);
       } catch (err) {
-        showToast(
-          'Kamera Tidak Tersedia',
-          'Pastikan halaman diakses melalui HTTPS/localhost dan izin kamera diberikan, atau gunakan tombol "Simulasi Scan QR Undangan".',
-          'warning'
-        );
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span><span>Ketuk layar atau tekan "Aktifkan Kamera" untuk mulai...</span>`;
+        }
+        bindTapToActivateCameraFallback();
+
+        if (!isAutoStart) {
+          showToast(
+            'Kamera Tidak Tersedia',
+            'Pastikan halaman diakses melalui HTTPS/localhost dan izin kamera diizinkan pada browser, atau gunakan tombol "Simulasi Scan QR Undangan".',
+            'warning'
+          );
+        }
+      } finally {
+        isStartingCamera = false;
       }
+    }
+
+    async function toggleCameraScanner() {
+      if (cameraStream) {
+        stopCameraScanner();
+        return;
+      }
+      await startCameraScanner(false);
     }
 
     function stopCameraScanner() {
@@ -2761,6 +2808,7 @@
       const switchBtn = document.getElementById('btn-switch-camera');
       const video = document.getElementById('qr-video');
       const bgPlaceholder = document.getElementById('camera-placeholder-bg');
+      const statusEl = document.getElementById('scanner-status-text');
 
       if (cameraAnimFrame) {
         cancelAnimationFrame(cameraAnimFrame);
@@ -2770,6 +2818,7 @@
         cameraStream.getTracks().forEach(track => track.stop());
         cameraStream = null;
       }
+      isStartingCamera = false;
       if (video) {
         video.srcObject = null;
         video.classList.add('hidden');
@@ -2777,13 +2826,16 @@
       if (bgPlaceholder) bgPlaceholder.classList.remove('hidden');
       if (btn) btn.textContent = 'Aktifkan Kamera';
       if (switchBtn) switchBtn.classList.add('hidden');
+      if (statusEl) {
+        statusEl.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-amber-400"></span><span>Kamera nonaktif • Tekan "Aktifkan Kamera"</span>`;
+      }
     }
 
     async function switchCameraFacingMode() {
       preferredFacingMode = preferredFacingMode === 'environment' ? 'user' : 'environment';
       if (cameraStream) {
         stopCameraScanner();
-        await toggleCameraScanner();
+        await startCameraScanner(false);
       }
     }
 
@@ -2792,6 +2844,19 @@
       const canvas = document.getElementById('qr-canvas');
       if (!cameraStream || !video || video.readyState !== video.HAVE_ENOUGH_DATA) {
         if (cameraStream) cameraAnimFrame = requestAnimationFrame(scanVideoFrame);
+        return;
+      }
+
+      // Jangan memindai dari kamera belakang jika modal panitia/simulasi sedang terbuka
+      const isModalOpen =
+        !document.getElementById('modal-sim-qr').classList.contains('hidden') ||
+        !document.getElementById('modal-admin').classList.contains('hidden') ||
+        !document.getElementById('modal-invitation-preview').classList.contains('hidden') ||
+        !document.getElementById('modal-sync-bridge').classList.contains('hidden') ||
+        !document.getElementById('modal-qr-zoom').classList.contains('hidden');
+
+      if (isModalOpen) {
+        cameraAnimFrame = requestAnimationFrame(scanVideoFrame);
         return;
       }
 
@@ -2893,8 +2958,6 @@
       setTimeout(() => {
         simCard.classList.add('hidden');
         pillBadge.classList.remove('hidden');
-        document.getElementById('scanner-status-text').innerHTML =
-          `<span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span><span>Mencari kode QR undangan...</span>`;
         openBallotForVoter(voter);
       }, 900);
     }
