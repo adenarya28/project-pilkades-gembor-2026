@@ -2,7 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Mengunci layout ke skala Tablet/Laptop (1024px) agar tampilan di Chrome Android & iOS identik dengan Tablet/Laptop -->
+  <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>E-Voting Pilkades Gembor 2026-2034 | TPS 01 - Bilik 1</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -80,36 +83,43 @@
   </script>
 
   <style>
+    html {
+      /* Mencegah pembesaran font acak oleh WebKit/Chrome di iOS */
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background-color: #111827;
+      min-width: 1024px;
+      min-height: 100vh;
+      min-height: 100dvh;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Dukungan latar 'latar.jpg' dengan fallback ornamen klasik surat suara Desa Gembor */
+    /* Dukungan latar 'latar.jpg' proporsional penuh seperti tampilan Tablet/Laptop */
     .bg-kandidat {
       --ballot-ornament: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='560' viewBox='0 0 800 560'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='65%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff'/%3E%3Cstop offset='75%25' stop-color='%23f8fafc'/%3E%3Cstop offset='100%25' stop-color='%23eef2f6'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='800' height='560' fill='url(%23g)'/%3E%3Crect x='14' y='14' width='772' height='532' rx='18' fill='none' stroke='%23cbd5e1' stroke-width='2'/%3E%3Crect x='22' y='22' width='756' height='516' rx='14' fill='none' stroke='%23e2e8f0' stroke-width='1.5' stroke-dasharray='6 4'/%3E%3C/svg%3E");
       background-color: #ffffff;
       background-image: url('latar.jpg'), var(--ballot-ornament);
-      background-position: top center, center center;
+      background-position: center center, center center;
       background-repeat: no-repeat, no-repeat;
-      background-size: 100% auto, 100% 100%;
+      background-size: 100% 100%, 100% 100%;
       background-attachment: scroll;
-    }
-
-    @media (min-width: 768px) {
-      .bg-kandidat {
-        background-position: center center, center center;
-        background-size: 100% 100%, 100% 100%;
-      }
     }
 
     .kandidat-card {
       transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      touch-action: manipulation;
     }
     .kandidat-card:hover {
       transform: translateY(-4px);
+    }
+    .kandidat-card:active {
+      transform: scale(0.98);
     }
 
     /* Kertas Struk Thermal dengan efek gerigi bawah */
@@ -133,6 +143,10 @@
 
     /* Dedicated Print Styles untuk Cetak Struk Thermal atau Surat Undangan */
     @media print {
+      html, body {
+        min-width: auto !important;
+        background: #ffffff !important;
+      }
       body * {
         visibility: hidden !important;
       }
@@ -153,38 +167,38 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-900 text-slate-900 overflow-x-hidden">
+<body class="min-h-screen min-h-[100dvh] flex flex-col bg-slate-900 text-slate-900">
 
   <!-- Hidden Print Container untuk Cetak Struk Audit atau Surat Undangan -->
   <div id="print-area" class="hidden"></div>
 
   <!-- Global Toast Notification Banner (Pengganti alert()) -->
-  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none max-w-sm w-full"></div>
 
   <!-- ===================================================================== -->
   <!-- LAYAR 1: PEMINDAI QR CODE SURAT UNDANGAN PEMILIH                      -->
   <!-- ===================================================================== -->
-  <section id="screen-scanner" class="min-h-screen flex flex-col bg-neutral-900 text-white">
-    <!-- Top Clean White Bar -->
-    <header class="bg-white text-slate-900 px-4 sm:px-8 py-3.5 sm:py-4 shadow-md flex flex-wrap items-center justify-between gap-3 z-20">
-      <div class="flex items-center gap-3">
-        <div id="scanner-header-logo" class="w-9 h-10 sm:w-10 sm:h-11 shrink-0"></div>
+  <section id="screen-scanner" class="min-h-screen min-h-[100dvh] flex flex-col bg-neutral-900 text-white">
+    <!-- Top Clean White Bar (Identik Tablet/Laptop) -->
+    <header class="bg-white text-slate-900 px-8 py-4 shadow-md flex items-center justify-between gap-4 z-20 shrink-0">
+      <div class="flex items-center gap-3.5">
+        <div id="scanner-header-logo" class="w-10 h-11 shrink-0"></div>
         <div>
-          <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
+          <h1 class="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
             Arahkan kamera ke QR code
           </h1>
-          <p class="text-xs sm:text-sm text-slate-500 font-medium">
+          <p class="text-sm text-slate-500 font-medium">
             Letakkan QR code Surat Undangan Pemilih di dalam kotak
           </p>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+      <div class="flex items-center gap-3 shrink-0">
         <!-- Tombol Simulasi Scan QR Undangan -->
         <button
           type="button"
           onclick="openSimModal()"
-          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs sm:text-sm font-bold shadow-sm transition cursor-pointer"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-sm font-bold shadow-sm transition cursor-pointer"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 12h10" />
@@ -197,7 +211,7 @@
           type="button"
           id="btn-toggle-camera"
           onclick="toggleCameraScanner()"
-          class="text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-sm px-2.5 py-2 rounded-lg hover:bg-blue-50 transition cursor-pointer"
+          class="text-blue-600 hover:text-blue-800 font-bold text-sm px-3 py-2 rounded-lg hover:bg-blue-50 transition cursor-pointer"
         >
           Aktifkan Kamera
         </button>
@@ -207,7 +221,7 @@
           type="button"
           id="btn-switch-camera"
           onclick="switchCameraFacingMode()"
-          class="hidden text-slate-700 hover:text-slate-900 font-bold text-xs sm:text-sm px-2.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 transition cursor-pointer"
+          class="hidden text-slate-700 hover:text-slate-900 font-bold text-sm px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 transition cursor-pointer"
           title="Ganti antara Kamera Depan dan Belakang"
         >
           Balik Kamera
@@ -217,7 +231,7 @@
         <button
           type="button"
           onclick="openAdminModal()"
-          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold border border-slate-200 transition cursor-pointer"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold border border-slate-200 transition cursor-pointer"
           title="Panel Panitia & Real Count"
         >
           <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -229,9 +243,9 @@
     </header>
 
     <!-- Main Dark Camera Viewport -->
-    <main id="scanner-viewport-area" class="relative flex-1 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950 p-4">
-      <!-- Live Webcam Video Element (Autoplay Standby) -->
-      <video id="qr-video" class="hidden absolute inset-0 w-full h-full object-cover" autoplay playsinline muted></video>
+    <main id="scanner-viewport-area" class="relative flex-1 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950 p-6">
+      <!-- Live Webcam Video Element (Autoplay Standby Android & iOS Chrome) -->
+      <video id="qr-video" class="hidden absolute inset-0 w-full h-full object-cover" autoplay playsinline webkit-playsinline muted></video>
       <canvas id="qr-canvas" class="hidden"></canvas>
 
       <!-- Subtle Ambient Grid Background when Camera Off -->
@@ -245,7 +259,7 @@
       </div>
 
       <!-- Center Square Viewfinder with Bright Green Corner Brackets -->
-      <div class="relative z-10 w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 flex items-center justify-center">
+      <div class="relative z-10 w-80 h-80 flex items-center justify-center">
         <!-- Animated Paper Scan Card Preview (muncul saat simulasi pemindaian) -->
         <div id="simulated-scan-card" class="hidden absolute inset-3 bg-white text-slate-900 rounded-xl shadow-2xl p-3 flex flex-col items-center justify-center border-2 border-emerald-400 animate-fadeInScale">
           <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">SURAT UNDANGAN PEMILIH</div>
@@ -264,42 +278,42 @@
         <div class="absolute left-3 right-3 h-0.5 bg-gradient-to-r from-transparent via-lime-400 to-transparent shadow-[0_0_12px_#a3e635] animate-scanline"></div>
 
         <!-- Center Pill Instruction Badge -->
-        <div id="scanner-pill-badge" class="px-4 py-2 rounded-lg bg-black/75 border border-white/15 text-white text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-sm text-center">
+        <div id="scanner-pill-badge" class="px-4 py-2 rounded-lg bg-black/75 border border-white/15 text-white text-sm font-semibold shadow-lg backdrop-blur-sm text-center">
           Letakkan QR code di dalam kotak
         </div>
       </div>
 
       <!-- Direct Demo Shortcut -->
-      <div class="relative z-10 mt-6 flex flex-col sm:flex-row items-center gap-2.5 text-center">
+      <div class="relative z-10 mt-6 flex items-center gap-2.5 text-center">
         <button
           type="button"
           onclick="openSimModal()"
-          class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs sm:text-sm font-medium backdrop-blur-sm transition cursor-pointer"
+          class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium backdrop-blur-sm transition cursor-pointer"
         >
           Klik di sini untuk memilih &amp; memindai <span class="font-bold text-lime-300">Surat Undangan DPT</span>
         </button>
       </div>
     </main>
 
-    <!-- Bottom Dark Status Bar -->
-    <footer class="bg-neutral-950 border-t border-white/10 py-3 px-4 flex items-center justify-between text-xs sm:text-sm">
-      <div class="text-slate-400 hidden sm:block">
+    <!-- Bottom Dark Status Bar (Identik Tablet/Laptop) -->
+    <footer class="bg-neutral-950 border-t border-white/10 py-3 px-6 flex items-center justify-between text-sm shrink-0">
+      <div class="text-slate-400">
         DPT Terdaftar: <span id="footer-dpt-stats" class="text-white font-semibold">0 / 0 Pemilih</span>
       </div>
-      <div id="scanner-status-text" class="mx-auto sm:mx-0 font-semibold text-slate-200 tracking-wide flex items-center gap-2">
+      <div id="scanner-status-text" class="font-semibold text-slate-200 tracking-wide flex items-center gap-2">
         <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
         <span>Menyiapkan kamera pemindai...</span>
       </div>
-      <div id="scanner-clock" class="font-mono text-slate-400 hidden sm:block">08:00:00 WIB</div>
+      <div id="scanner-clock" class="font-mono text-slate-400">08:00:00 WIB</div>
     </footer>
   </section>
 
   <!-- ===================================================================== -->
-  <!-- LAYAR 2: SURAT SUARA DIGITAL ("SURAT SUARA")                          -->
+  <!-- LAYAR 2: SURAT SUARA DIGITAL ("SURAT SUARA") — TAMPILAN TABLET/LAPTOP -->
   <!-- ===================================================================== -->
-  <section id="screen-ballot" class="hidden min-h-screen flex-col bg-neutral-200">
+  <section id="screen-ballot" class="hidden min-h-screen min-h-[100dvh] flex-col bg-neutral-200">
     <!-- Top Red Bar dengan Tombol Merah "KELUAR" dan Identitas Pemilih Aktif -->
-    <div class="bg-red-700 text-white px-4 sm:px-6 py-2.5 flex items-center justify-between shadow-md">
+    <div class="bg-red-700 text-white px-6 py-2.5 flex items-center justify-between shadow-md shrink-0">
       <div class="flex items-center gap-3">
         <button
           type="button"
@@ -314,38 +328,38 @@
         </span>
       </div>
 
-      <div class="flex items-center gap-3 text-xs text-red-100">
-        <span id="ballot-tps-label" class="hidden md:inline font-semibold">TPS 01 / Bilik 1</span>
+      <div class="flex items-center gap-4 text-xs text-red-100">
+        <span id="ballot-tps-label" class="font-semibold">TPS 01 / Bilik 1</span>
         <span id="ballot-clock" class="font-mono font-bold text-white">08:15:00 WIB</span>
       </div>
     </div>
 
     <!-- Main White Ballot Sheet Container -->
-    <div class="flex-1 flex items-center justify-center p-2.5 sm:p-4 md:p-5">
-      <div id="ballot-sheet-container" class="bg-kandidat w-full max-w-6xl rounded-3xl shadow-2xl border-2 border-slate-300 px-3.5 sm:px-7 md:px-10 py-4 sm:py-6 md:py-7 flex flex-col justify-between">
+    <div class="flex-1 flex items-center justify-center p-5">
+      <div id="ballot-sheet-container" class="bg-kandidat w-full max-w-6xl rounded-3xl shadow-2xl border-2 border-slate-300 px-10 py-7 flex flex-col justify-between">
         
-        <!-- Kop Resmi Surat Suara Desa Gembor (Teks Tengah Rata Kanan-Kiri Mengikuti Latar) -->
-        <div class="w-full mx-auto text-center px-12 sm:px-24 md:px-36 lg:px-44 pt-1 pb-4 sm:pb-6">
-          <h2 class="text-xl sm:text-3xl md:text-[32px] font-black tracking-wide text-slate-950 uppercase leading-none">
+        <!-- Kop Resmi Surat Suara Desa Gembor (Proporsi Tablet/Laptop) -->
+        <div class="w-full mx-auto text-center px-36 pt-1 pb-6">
+          <h2 class="text-[32px] font-black tracking-wide text-slate-950 uppercase leading-none">
             SURAT SUARA
           </h2>
-          <p class="text-xs sm:text-lg md:text-[21px] font-black text-red-600 uppercase tracking-wide mt-1 leading-tight">
+          <p class="text-[21px] font-black text-red-600 uppercase tracking-wide mt-1 leading-tight">
             PEMILIHAN KEPALA DESA GEMBOR
           </p>
-          <p class="text-[10px] sm:text-sm md:text-base font-extrabold text-slate-900 uppercase tracking-wide mt-0.5 leading-tight">
+          <p class="text-base font-extrabold text-slate-900 uppercase tracking-wide mt-0.5 leading-tight">
             KECAMATAN PAGADEN KABUPATEN SUBANG
           </p>
-          <p class="text-[10px] sm:text-sm md:text-base font-extrabold text-slate-800 uppercase tracking-wide mt-0.5 leading-tight">
+          <p class="text-base font-extrabold text-slate-800 uppercase tracking-wide mt-0.5 leading-tight">
             PERIODE TAHUN 2026 - 2034
           </p>
         </div>
 
-        <!-- 4-Column Horizontal Candidate Grid (Ukuran Frame Proporsional di Tengah Latar) -->
-        <div id="candidates-grid" class="w-full max-w-4xl lg:max-w-[900px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5 lg:gap-6 my-1 sm:my-2">
+        <!-- 4-Column Horizontal Candidate Grid (SEJAJAR 4 KOLOM SEPERTI TABLET/LAPTOP) -->
+        <div id="candidates-grid" class="w-full max-w-[900px] mx-auto grid grid-cols-4 gap-6 my-2">
 
           <!-- KANDIDAT NO 1 -->
           <div id="candidate-card-1" onclick="selectCandidate(1)" class="kandidat-card bg-white rounded-xl overflow-hidden border-[2.5px] border-gray-900 shadow-md flex flex-col cursor-pointer group relative">
-            <div id="cand-num-1" class="bg-white text-black font-black text-xl sm:text-2xl py-1 sm:py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none">
+            <div id="cand-num-1" class="bg-white text-black font-black text-2xl py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none">
               1
             </div>
             <div class="relative w-full aspect-[1/1.02] bg-gray-200 overflow-hidden">
@@ -354,14 +368,14 @@
                 <span>Dipilih</span>
               </div>
             </div>
-            <div id="cand-name-box-1" class="bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 flex-grow flex items-center justify-center min-h-[44px] sm:min-h-[48px]">
-              <h3 id="cand-name-1" class="font-extrabold text-gray-900 uppercase tracking-tight leading-tight text-[11px] sm:text-xs">ASEP MOHAMAD ROMLI</h3>
+            <div id="cand-name-box-1" class="bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 flex-grow flex items-center justify-center min-h-[48px]">
+              <h3 id="cand-name-1" class="font-extrabold text-gray-900 uppercase tracking-tight leading-tight text-xs">ASEP MOHAMAD ROMLI</h3>
             </div>
           </div>
 
           <!-- KANDIDAT NO 2 -->
           <div id="candidate-card-2" onclick="selectCandidate(2)" class="kandidat-card bg-white rounded-xl overflow-hidden border-[2.5px] border-gray-900 shadow-md flex flex-col cursor-pointer group relative">
-            <div id="cand-num-2" class="bg-white text-black font-black text-xl sm:text-2xl py-1 sm:py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none">
+            <div id="cand-num-2" class="bg-white text-black font-black text-2xl py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none">
               2
             </div>
             <div class="relative w-full aspect-[1/1.02] bg-gray-200 overflow-hidden">
@@ -370,14 +384,14 @@
                 <span>Dipilih</span>
               </div>
             </div>
-            <div id="cand-name-box-2" class="bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 flex-grow flex items-center justify-center min-h-[44px] sm:min-h-[48px]">
-              <h3 id="cand-name-2" class="font-extrabold text-gray-900 uppercase tracking-tight leading-tight text-[11px] sm:text-xs">H. TATANG SUHERLAN</h3>
+            <div id="cand-name-box-2" class="bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 flex-grow flex items-center justify-center min-h-[48px]">
+              <h3 id="cand-name-2" class="font-extrabold text-gray-900 uppercase tracking-tight leading-tight text-xs">H. TATANG SUHERLAN</h3>
             </div>
           </div>
 
           <!-- KANDIDAT NO 3 -->
           <div id="candidate-card-3" onclick="selectCandidate(3)" class="kandidat-card bg-white rounded-xl overflow-hidden border-[2.5px] border-gray-900 shadow-md flex flex-col cursor-pointer group relative">
-            <div id="cand-num-3" class="bg-white text-black font-black text-xl sm:text-2xl py-1 sm:py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none">
+            <div id="cand-num-3" class="bg-white text-black font-black text-2xl py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none">
               3
             </div>
             <div class="relative w-full aspect-[1/1.02] bg-gray-200 overflow-hidden">
@@ -386,14 +400,14 @@
                 <span>Dipilih</span>
               </div>
             </div>
-            <div id="cand-name-box-3" class="bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 flex-grow flex items-center justify-center min-h-[44px] sm:min-h-[48px]">
-              <h3 id="cand-name-3" class="font-extrabold text-gray-900 uppercase tracking-tight leading-tight text-[11px] sm:text-xs">WARKESIH</h3>
+            <div id="cand-name-box-3" class="bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 flex-grow flex items-center justify-center min-h-[48px]">
+              <h3 id="cand-name-3" class="font-extrabold text-gray-900 uppercase tracking-tight leading-tight text-xs">WARKESIH</h3>
             </div>
           </div>
 
           <!-- KANDIDAT NO 4 -->
           <div id="candidate-card-4" onclick="selectCandidate(4)" class="kandidat-card bg-white rounded-xl overflow-hidden border-[2.5px] border-gray-900 shadow-md flex flex-col cursor-pointer group relative">
-            <div id="cand-num-4" class="bg-white text-black font-black text-xl sm:text-2xl py-1 sm:py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none">
+            <div id="cand-num-4" class="bg-white text-black font-black text-2xl py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none">
               4
             </div>
             <div class="relative w-full aspect-[1/1.02] bg-gray-200 overflow-hidden">
@@ -402,21 +416,21 @@
                 <span>Dipilih</span>
               </div>
             </div>
-            <div id="cand-name-box-4" class="bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 flex-grow flex items-center justify-center min-h-[44px] sm:min-h-[48px]">
-              <h3 id="cand-name-4" class="font-extrabold text-gray-900 uppercase tracking-tight leading-tight text-[11px] sm:text-xs">DEDI SUHARNA</h3>
+            <div id="cand-name-box-4" class="bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 flex-grow flex items-center justify-center min-h-[48px]">
+              <h3 id="cand-name-4" class="font-extrabold text-gray-900 uppercase tracking-tight leading-tight text-xs">DEDI SUHARNA</h3>
             </div>
           </div>
 
         </div>
 
         <!-- Tombol Besar Biru di Bawah Tengah: "PILIH KANDIDAT INI" -->
-        <div class="relative mt-4 sm:mt-5 max-w-md sm:max-w-lg mx-auto w-full px-6 sm:px-0">
+        <div class="relative mt-5 max-w-lg mx-auto w-full">
           <button
             type="button"
             id="btn-submit-ballot"
             disabled
             onclick="openConfirmModal()"
-            class="w-full py-3 sm:py-3.5 rounded-xl font-extrabold text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 bg-slate-300 text-slate-500 cursor-not-allowed"
+            class="w-full py-3.5 rounded-xl font-extrabold text-sm uppercase tracking-wider transition-all duration-200 bg-slate-300 text-slate-500 cursor-not-allowed"
           >
             PILIH KANDIDAT INI
           </button>
@@ -425,15 +439,13 @@
           <div
             id="hand-pointer-guide"
             aria-hidden="true"
-            class="hidden pointer-events-none select-none z-20 absolute -bottom-5 right-3 sm:right-8 items-center gap-1.5 animate-handPoint"
+            class="hidden pointer-events-none select-none z-20 absolute -bottom-5 right-8 items-center gap-1.5 animate-handPoint"
           >
             <div class="relative flex items-center justify-center">
-              <!-- Efek riak sentuhan di ujung jari -->
               <span class="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-amber-300/75 animate-ping"></span>
               <span class="absolute -top-0.5 -left-0.5 w-3.5 h-3.5 rounded-full bg-yellow-300 border border-slate-900/40"></span>
-              <!-- Ikon SVG Tangan Menunjuk ke Tombol -->
               <svg
-                class="w-11 h-11 sm:w-12 sm:h-12 drop-shadow-[0_6px_10px_rgba(0,0,0,0.45)] -rotate-12"
+                class="w-12 h-12 drop-shadow-[0_6px_10px_rgba(0,0,0,0.45)] -rotate-12"
                 viewBox="0 0 64 64"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -451,7 +463,7 @@
                 <path d="M49 34.5V39" stroke="#0F172A" stroke-width="2.8" stroke-linecap="round" />
               </svg>
             </div>
-            <span class="px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] sm:text-xs uppercase tracking-wide border-2 border-slate-900 shadow-md">
+            <span class="px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wide border-2 border-slate-900 shadow-md">
               Tekan
             </span>
           </div>
@@ -464,41 +476,41 @@
   <!-- LAYAR 3: MODAL KONFIRMASI PEMILIHAN                                   -->
   <!-- ===================================================================== -->
   <div id="modal-confirm" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 animate-fadeInScale border border-slate-200 text-center">
-      <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-fadeInScale border border-slate-200 text-center">
+      <h3 class="text-2xl font-extrabold text-slate-900">
         Konfirmasi Pemilihan
       </h3>
-      <p class="text-xs sm:text-sm text-slate-600 mt-1.5">
+      <p class="text-sm text-slate-600 mt-1.5">
         Apakah Anda yakin akan memilih kandidat ini?
       </p>
 
       <!-- Pratinjau Kartu Kandidat yang Dipilih -->
       <div class="my-6 flex flex-col items-center justify-center">
-        <div class="w-44 sm:w-48 border-[3px] border-gray-900 rounded-xl overflow-hidden shadow-lg bg-white">
+        <div class="w-48 border-[3px] border-gray-900 rounded-xl overflow-hidden shadow-lg bg-white">
           <div id="confirm-cand-number" class="bg-white text-black text-center font-black text-2xl py-1 border-b-[3px] border-gray-900">
             1
           </div>
           <div id="confirm-cand-photo-box" class="w-full aspect-[1/1.08] bg-gray-200 flex items-end justify-center overflow-hidden">
           </div>
-          <div id="confirm-cand-name" class="p-2.5 text-center text-xs sm:text-sm font-extrabold text-gray-900 uppercase leading-snug border-t-[3px] border-gray-900 bg-white">
+          <div id="confirm-cand-name" class="p-2.5 text-center text-sm font-extrabold text-gray-900 uppercase leading-snug border-t-[3px] border-gray-900 bg-white">
             ASEP MOHAMAD ROMLI
           </div>
         </div>
       </div>
 
       <!-- Dua Tombol Lebar Berdampingan: Merah "ULANGI" (Kiri) & Biru "PILIH" (Kanan) -->
-      <div class="grid grid-cols-2 gap-3 sm:gap-4 mt-4">
+      <div class="grid grid-cols-2 gap-4 mt-4">
         <button
           type="button"
           onclick="closeConfirmModal()"
-          class="py-3.5 rounded-xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow transition cursor-pointer"
+          class="py-3.5 rounded-xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-extrabold text-sm uppercase tracking-wider shadow transition cursor-pointer"
         >
           ULANGI
         </button>
         <button
           type="button"
           onclick="confirmAndCastVote()"
-          class="py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-md transition cursor-pointer"
+          class="py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-sm uppercase tracking-wider shadow-md transition cursor-pointer"
         >
           PILIH
         </button>
@@ -509,30 +521,30 @@
   <!-- ===================================================================== -->
   <!-- LAYAR 4: PRINTER STRUK AUDIT THERMAL & KOTAK AUDIT                    -->
   <!-- ===================================================================== -->
-  <section id="screen-receipt" class="hidden min-h-screen flex-col bg-slate-900 text-white">
+  <section id="screen-receipt" class="hidden min-h-screen min-h-[100dvh] flex-col bg-slate-900 text-white">
     <!-- Top Header -->
-    <header class="bg-slate-800 border-b border-slate-700 px-4 sm:px-8 py-4 flex items-center justify-between">
+    <header class="bg-slate-800 border-b border-slate-700 px-8 py-4 flex items-center justify-between shrink-0">
       <div>
         <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
           Suara Berhasil Dikunci &amp; Tercatat
         </span>
-        <h2 class="text-lg sm:text-xl font-extrabold text-white mt-0.5">
+        <h2 class="text-xl font-extrabold text-white mt-0.5">
           Pencetakan Struk Audit &amp; Penyerahan ke Kotak Audit
         </h2>
       </div>
-      <div class="text-right hidden sm:block">
+      <div class="text-right">
         <div class="text-xs text-slate-400">Perangkat Pencetak</div>
         <div id="receipt-printer-label" class="text-sm font-bold text-amber-300">Thermal Printer • Bilik 1</div>
       </div>
     </header>
 
-    <!-- Main Printer & Audit Box Stage -->
-    <main class="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 p-4 sm:p-8 max-w-6xl mx-auto w-full">
+    <!-- Main Printer & Audit Box Stage (Sejajar Kiri-Kanan seperti Tablet/Laptop) -->
+    <main class="flex-1 flex flex-row items-center justify-center gap-12 p-8 max-w-6xl mx-auto w-full">
       
       <!-- Kolom Kiri: Simulasi Printer Thermal Hitam bertuliskan "Bilik 1" -->
       <div class="flex flex-col items-center w-full max-w-sm">
-        <div class="w-72 sm:w-80 bg-neutral-800 rounded-t-3xl border-2 border-neutral-700 p-4 shadow-2xl relative z-20">
+        <div class="w-80 bg-neutral-800 rounded-t-3xl border-2 border-neutral-700 p-4 shadow-2xl relative z-20">
           <div class="flex items-center justify-between mb-3">
             <div id="receipt-booth-badge" class="px-3 py-1 bg-yellow-300 text-slate-900 font-black text-xs rounded shadow-xs border border-yellow-400">
               1 • Bilik 1
@@ -547,7 +559,7 @@
         </div>
 
         <!-- Kertas Struk Audit Keluar Bertahap -->
-        <div class="w-64 sm:w-72 overflow-hidden pt-0 pb-4 px-2 flex justify-center -mt-1 z-10">
+        <div class="w-72 overflow-hidden pt-0 pb-4 px-2 flex justify-center -mt-1 z-10">
           <div id="thermal-receipt-paper" class="receipt-paper w-full text-slate-900 px-4 pt-5 pb-6 text-center animate-printSlide">
             <div class="text-xs font-black tracking-wider uppercase text-slate-900">
               SURAT AUDIT
@@ -581,7 +593,7 @@
       </div>
 
       <!-- Kolom Kanan: Instruksi Kotak Audit & Tombol Selesai -->
-      <div class="flex flex-col items-center lg:items-start text-center lg:text-left max-w-md w-full bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
+      <div class="flex flex-col items-start text-left max-w-md w-full bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold mb-3">
           Tahap Akhir Pemungutan Suara
         </div>
@@ -614,7 +626,7 @@
             type="button"
             id="btn-finish-audit"
             onclick="insertReceiptIntoAuditBox()"
-            class="w-full py-3.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-900/40 flex items-center justify-center gap-2 transition cursor-pointer"
+            class="w-full py-3.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold text-base shadow-lg shadow-emerald-900/40 flex items-center justify-center gap-2 transition cursor-pointer"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -625,7 +637,7 @@
           <button
             type="button"
             onclick="printPhysicalThermalReceipt()"
-            class="w-full py-2.5 px-4 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-600 flex items-center justify-center gap-2 transition cursor-pointer"
+            class="w-full py-2.5 px-4 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold text-sm border border-slate-600 flex items-center justify-center gap-2 transition cursor-pointer"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -640,29 +652,29 @@
   <!-- ===================================================================== -->
   <!-- LAYAR PENUTUP: UCAPAN TERIMA KASIH                                    -->
   <!-- ===================================================================== -->
-  <section id="screen-thankyou" class="hidden min-h-screen flex-col items-center justify-center bg-slate-900 text-white p-4 sm:p-6">
-    <div class="bg-white text-slate-900 p-8 md:p-12 rounded-3xl shadow-2xl border-t-8 border-emerald-500 text-center max-w-xl w-full animate-fadeInScale">
+  <section id="screen-thankyou" class="hidden min-h-screen min-h-[100dvh] flex-col items-center justify-center bg-slate-900 text-white p-6">
+    <div class="bg-white text-slate-900 p-12 rounded-3xl shadow-2xl border-t-8 border-emerald-500 text-center max-w-xl w-full animate-fadeInScale">
       <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-emerald-100 mb-5 border-4 border-emerald-200">
         <svg class="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M5 13l4 4L19 7"></path>
         </svg>
       </div>
 
-      <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">Terima Kasih!</h2>
-      <p class="text-base md:text-lg font-bold text-emerald-600 mb-4">Pemilihan Anda Telah Selesai</p>
+      <h2 class="text-4xl font-black text-slate-900 mb-2">Terima Kasih!</h2>
+      <p class="text-lg font-bold text-emerald-600 mb-4">Pemilihan Anda Telah Selesai</p>
 
-      <p class="text-slate-600 text-sm md:text-base leading-relaxed mb-6">
+      <p class="text-slate-600 text-base leading-relaxed mb-6">
         Terima kasih telah menggunakan hak pilih Anda pada <strong>Pemilihan Kepala Desa Gembor Periode 2026 - 2034</strong>. Pilihan Anda telah tersimpan secara rahasia.
       </p>
 
-      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 mb-7 text-xs sm:text-sm text-slate-500">
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 mb-7 text-sm text-slate-500">
         Silakan tinggalkan bilik suara atau tekan tombol di bawah untuk mengulangi simulasi bagi pemilih berikutnya.
       </div>
 
       <button
         type="button"
         onclick="finishToNextVoter()"
-        class="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-extrabold rounded-xl transition shadow-lg text-base sm:text-lg cursor-pointer"
+        class="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-extrabold rounded-xl transition shadow-lg text-lg cursor-pointer"
       >
         Selesai / Pemilih Berikutnya
       </button>
@@ -672,11 +684,11 @@
   <!-- ===================================================================== -->
   <!-- MODAL SIMULASI SCAN QR UNDANGAN PEMILIH (DPT DESA GEMBOR)             -->
   <!-- ===================================================================== -->
-  <div id="modal-sim-qr" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
+  <div id="modal-sim-qr" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-6">
     <div class="bg-white text-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-fadeInScale">
-      <div class="px-5 sm:px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
         <div>
-          <h3 class="text-base sm:text-lg font-extrabold">Simulasi Scan QR Surat Undangan Pemilih (DPT Desa Gembor)</h3>
+          <h3 class="text-lg font-extrabold">Simulasi Scan QR Surat Undangan Pemilih (DPT Desa Gembor)</h3>
           <p class="text-xs text-slate-300">Pilih salah satu Surat Undangan DPT di bawah untuk memindai QR (dapat dipindai berulang kali)</p>
         </div>
         <button
@@ -690,7 +702,7 @@
         </button>
       </div>
 
-      <div id="sim-voters-list" class="p-4 sm:p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-100">
+      <div id="sim-voters-list" class="p-6 overflow-y-auto grid grid-cols-2 gap-4 bg-slate-100">
         <!-- Kartu Undangan DPT dirender oleh JS -->
       </div>
     </div>
@@ -699,7 +711,7 @@
   <!-- ===================================================================== -->
   <!-- MODAL PREVIEW SURAT UNDANGAN PEMUNGUTAN SUARA                         -->
   <!-- ===================================================================== -->
-  <div id="modal-invitation-preview" class="hidden fixed inset-0 z-[60] bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
+  <div id="modal-invitation-preview" class="hidden fixed inset-0 z-[60] bg-black/75 backdrop-blur-xs flex items-center justify-center p-6">
     <div class="bg-white text-slate-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-fadeInScale">
       <div class="px-5 py-3.5 bg-slate-800 text-white flex items-center justify-between">
         <span class="font-bold text-sm">Surat Undangan Pemungutan Suara — Desa Gembor</span>
@@ -710,22 +722,22 @@
         </button>
       </div>
 
-      <div id="invitation-letter-content" class="p-5 sm:p-8 overflow-y-auto bg-white">
+      <div id="invitation-letter-content" class="p-8 overflow-y-auto bg-white">
         <!-- Isi surat undangan resmi -->
       </div>
 
-      <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-end gap-3">
+      <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
         <button
           type="button"
           onclick="printInvitationLetter()"
-          class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs sm:text-sm font-bold transition cursor-pointer"
+          class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-sm font-bold transition cursor-pointer"
         >
           Cetak Surat Undangan
         </button>
         <button
           type="button"
           id="btn-scan-from-preview"
-          class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold shadow transition cursor-pointer"
+          class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow transition cursor-pointer"
         >
           Scan QR Ini Sekarang
         </button>
@@ -736,15 +748,15 @@
   <!-- ===================================================================== -->
   <!-- MODAL PANEL PANITIA (KEAMANAN PIN + 4 TAB MANAJEMEN LENGKAP)          -->
   <!-- ===================================================================== -->
-  <div id="modal-admin" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6">
+  <div id="modal-admin" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-6">
     <div class="bg-white text-slate-900 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-fadeInScale">
       <!-- Header Panel Panitia -->
-      <div class="px-5 sm:px-6 py-4 bg-slate-900 text-white flex flex-wrap items-center justify-between gap-3">
+      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
           <div id="admin-header-logo" class="w-9 h-10 shrink-0"></div>
           <div>
             <div class="flex items-center gap-2">
-              <h3 class="text-base sm:text-lg font-extrabold">Panel Panitia Pilkades Gembor</h3>
+              <h3 class="text-lg font-extrabold">Panel Panitia Pilkades Gembor</h3>
               <button
                 type="button"
                 id="cloud-sync-badge"
@@ -781,14 +793,14 @@
       </div>
 
       <!-- GERBANG VERIFIKASI PIN KEAMANAN PANITIA -->
-      <div id="admin-pin-gate" class="p-6 sm:p-10 flex-1 flex flex-col items-center justify-center bg-slate-50 text-center">
+      <div id="admin-pin-gate" class="p-10 flex-1 flex flex-col items-center justify-center bg-slate-50 text-center">
         <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center mb-4 border border-blue-200 shadow-xs">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
-        <h4 class="text-lg sm:text-xl font-extrabold text-slate-900">Otorisasi Khusus Panitia KPPS</h4>
-        <p class="text-xs sm:text-sm text-slate-600 max-w-md mt-1">
+        <h4 class="text-xl font-extrabold text-slate-900">Otorisasi Khusus Panitia KPPS</h4>
+        <p class="text-sm text-slate-600 max-w-md mt-1">
           Masukkan <strong>PIN Panitia</strong> untuk membuka Real Count, Manajemen DPT, Verifikasi Audit, dan Pengaturan TPS.
         </p>
 
@@ -842,26 +854,26 @@
       <div id="admin-authenticated-body" class="hidden flex-1 flex-col overflow-hidden">
         <!-- 4 Tab Navigasi Panitia -->
         <div class="flex border-b border-slate-200 bg-slate-50 px-4 overflow-x-auto shrink-0">
-          <button type="button" onclick="switchAdminTab('realcount')" id="tab-btn-realcount" class="admin-tab-btn px-4 py-3 text-xs sm:text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer">
-1. Real Count &amp; Berita Acara
+          <button type="button" onclick="switchAdminTab('realcount')" id="tab-btn-realcount" class="admin-tab-btn px-4 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer">
+            1. Real Count &amp; Berita Acara
           </button>
-          <button type="button" onclick="switchAdminTab('dpt')" id="tab-btn-dpt" class="admin-tab-btn px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer">
-2. Manajemen DPT &amp; Undangan
+          <button type="button" onclick="switchAdminTab('dpt')" id="tab-btn-dpt" class="admin-tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer">
+            2. Manajemen DPT &amp; Undangan
           </button>
-          <button type="button" onclick="switchAdminTab('audit')" id="tab-btn-audit" class="admin-tab-btn px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer">
-3. Audit Kotak Suara
+          <button type="button" onclick="switchAdminTab('audit')" id="tab-btn-audit" class="admin-tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer">
+            3. Audit Kotak Suara
           </button>
-          <button type="button" onclick="switchAdminTab('settings')" id="tab-btn-settings" class="admin-tab-btn px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer">
-4. Pengaturan TPS &amp; Kandidat
+          <button type="button" onclick="switchAdminTab('settings')" id="tab-btn-settings" class="admin-tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer">
+            4. Pengaturan TPS &amp; Kandidat
           </button>
         </div>
 
         <!-- Tab Content Area -->
-        <div class="p-4 sm:p-6 overflow-y-auto flex-1 bg-white">
+        <div class="p-6 overflow-y-auto flex-1 bg-white">
           
           <!-- TAB 1: REAL COUNT, GRAFIK & BERITA ACARA C1 -->
           <div id="admin-tab-realcount" class="space-y-6">
-            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div class="grid grid-cols-5 gap-3">
               <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
                 <div class="text-[11px] font-semibold text-slate-500">Total DPT Terdaftar</div>
                 <div id="stat-total-dpt" class="text-2xl font-black text-slate-900 mt-1">0</div>
@@ -878,26 +890,26 @@
                 <div class="text-[11px] font-semibold text-blue-700">Partisipasi Pemilih</div>
                 <div id="stat-participation" class="text-2xl font-black text-blue-700 mt-1">0%</div>
               </div>
-              <div class="p-3.5 rounded-xl bg-purple-50 border border-purple-200 col-span-2 lg:col-span-1">
+              <div class="p-3.5 rounded-xl bg-purple-50 border border-purple-200">
                 <div class="text-[11px] font-semibold text-purple-700">Struk Kotak Audit</div>
                 <div id="stat-audit-receipts" class="text-2xl font-black text-purple-700 mt-1">0</div>
               </div>
             </div>
 
             <!-- Bar Sinkronisasi Antar Perangkat (Laptop Panitia <-> Tablet Pemilihan) -->
-            <div class="p-4 rounded-2xl bg-slate-900 text-white border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="p-4 rounded-2xl bg-slate-900 text-white border border-slate-700 flex items-center justify-between gap-4">
               <div class="space-y-1">
                 <div class="flex items-center gap-2">
                   <span id="admin-sync-bar-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                  <span id="admin-sync-bar-title" class="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-amber-300">
+                  <span id="admin-sync-bar-title" class="text-sm font-extrabold uppercase tracking-wide text-amber-300">
                     Sinkronisasi 2 Perangkat: Mode Lokal
                   </span>
                 </div>
                 <p id="admin-sync-bar-desc" class="text-xs text-slate-300 leading-relaxed">
-                  Agar suara dari Tablet otomatis masuk ke Laptop ini, hubungkan Cloud Real-Time atau terima paket data QR dari Tablet.
+                  Agar suara dari Tablet/HP otomatis masuk ke Laptop ini, hubungkan Cloud Real-Time atau terima paket data QR dari perangkat bilik.
                 </p>
               </div>
-              <div class="flex flex-wrap items-center gap-2 shrink-0">
+              <div class="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
                   onclick="openSyncBridgeModal('cloud')"
@@ -916,10 +928,10 @@
             </div>
 
             <!-- Grafik Perolehan Suara 4 Kandidat Desa Gembor -->
-            <div class="border border-slate-200 rounded-2xl p-4 sm:p-6">
-              <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div class="border border-slate-200 rounded-2xl p-6">
+              <div class="flex items-center justify-between gap-2 mb-4">
                 <div>
-                  <h4 class="font-extrabold text-slate-900 text-sm sm:text-base">Perolehan Suara Kandidat Kepala Desa Gembor (2026 - 2034)</h4>
+                  <h4 class="font-extrabold text-slate-900 text-base">Perolehan Suara Kandidat Kepala Desa Gembor (2026 - 2034)</h4>
                   <p class="text-xs text-slate-500">Peringkat dan persentase dihitung otomatis dari suara sah masuk</p>
                 </div>
                 <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">Real-Time</span>
@@ -930,16 +942,16 @@
             </div>
 
             <!-- Ekspor Laporan & Berita Acara Resmi Panitia -->
-            <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-200 flex items-center justify-between gap-4">
               <div>
                 <h5 class="text-sm font-extrabold text-slate-900">Berita Acara &amp; Rekapitulasi Hasil Penghitungan Suara</h5>
                 <p class="text-xs text-slate-600 mt-0.5">Cetak dokumen Berita Acara (Model C1 Pilkades) lengkap dengan kolom tanda tangan Panitia &amp; Saksi, atau unduh file CSV.</p>
               </div>
-              <div class="flex flex-wrap items-center gap-2 shrink-0">
+              <div class="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
                   onclick="printBeritaAcaraC1()"
-                  class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-xs transition cursor-pointer inline-flex items-center gap-1.5"
+                  class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer inline-flex items-center gap-1.5"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -949,7 +961,7 @@
                 <button
                   type="button"
                   onclick="exportPanitiaCsv()"
-                  class="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-xs sm:text-sm transition cursor-pointer inline-flex items-center gap-1.5"
+                  class="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-sm transition cursor-pointer inline-flex items-center gap-1.5"
                 >
                   <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -960,7 +972,7 @@
             </div>
 
             <!-- Tombol Reset Simulasi (Tanpa confirm()) -->
-            <div class="p-4 rounded-xl bg-red-50 border border-red-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="p-4 rounded-xl bg-red-50 border border-red-200 flex items-center justify-between gap-4">
               <div>
                 <h5 class="text-sm font-extrabold text-red-900">Reset Data Simulasi E-Voting</h5>
                 <p class="text-xs text-red-700 mt-0.5">Mengembalikan seluruh status DPT menjadi "Belum Memilih", mengosongkan suara, dan membersihkan kotak audit.</p>
@@ -969,7 +981,7 @@
                 <button
                   type="button"
                   onclick="showInlineResetConfirm()"
-                  class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm transition cursor-pointer"
+                  class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition cursor-pointer"
                 >
                   Reset Simulasi
                 </button>
@@ -981,7 +993,7 @@
           <div id="admin-tab-dpt" class="hidden space-y-5">
             <!-- Tambah Pemilih DPT Baru -->
             <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-              <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center justify-between gap-2">
                 <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Pendaftaran Pemilih Tetap (DPT) Baru</span>
                 <button
                   type="button"
@@ -992,7 +1004,7 @@
                 </button>
               </div>
 
-              <form onsubmit="handleAddDptVoter(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+              <form onsubmit="handleAddDptVoter(event)" class="grid grid-cols-4 gap-3 items-end">
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1">No. Urut DPT</label>
                   <input type="text" id="new-dpt-no" required placeholder="Contoh: 006" class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:border-blue-600" />
@@ -1033,19 +1045,19 @@
             </div>
 
             <!-- Bar Pencarian, Filter Status & Cetak Semua Undangan -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div class="flex flex-1 flex-col sm:flex-row gap-2">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex flex-1 gap-2">
                 <input
                   type="text"
                   id="dpt-search-input"
                   oninput="renderAdminDptTable()"
                   placeholder="Cari Nama, NIK, atau No. DPT..."
-                  class="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-blue-600"
+                  class="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-blue-600"
                 />
                 <select
                   id="dpt-filter-status"
                   onchange="renderAdminDptTable()"
-                  class="px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm bg-white font-semibold text-slate-700 focus:outline-none focus:border-blue-600"
+                  class="px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white font-semibold text-slate-700 focus:outline-none focus:border-blue-600"
                 >
                   <option value="all">Semua Status DPT</option>
                   <option value="unvoted">Belum Memilih</option>
@@ -1055,7 +1067,7 @@
               <button
                 type="button"
                 onclick="printAllInvitationsBatch()"
-                class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm transition cursor-pointer shrink-0"
+                class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition cursor-pointer shrink-0"
               >
                 Cetak Semua Undangan QR
               </button>
@@ -1063,14 +1075,14 @@
 
             <!-- Tabel DPT -->
             <div class="overflow-x-auto border border-slate-200 rounded-xl">
-              <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <table class="w-full text-left border-collapse text-sm">
                 <thead>
                   <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
-                    <th class="py-3 px-3 sm:px-4 font-extrabold">No. DPT</th>
-                    <th class="py-3 px-3 sm:px-4 font-extrabold">Nama Pemilih</th>
-                    <th class="py-3 px-3 sm:px-4 font-extrabold">NIK</th>
-                    <th class="py-3 px-3 sm:px-4 font-extrabold">Status</th>
-                    <th class="py-3 px-3 sm:px-4 font-extrabold text-right">Aksi Panitia</th>
+                    <th class="py-3 px-4 font-extrabold">No. DPT</th>
+                    <th class="py-3 px-4 font-extrabold">Nama Pemilih</th>
+                    <th class="py-3 px-4 font-extrabold">NIK</th>
+                    <th class="py-3 px-4 font-extrabold">Status</th>
+                    <th class="py-3 px-4 font-extrabold text-right">Aksi Panitia</th>
                   </tr>
                 </thead>
                 <tbody id="admin-dpt-tbody" class="divide-y divide-slate-200">
@@ -1086,7 +1098,7 @@
             <div id="audit-balance-banner" class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-3">
               <div>
                 <div class="text-xs font-extrabold uppercase tracking-wider text-emerald-800">Status Integritas Kotak Audit Digital</div>
-                <div id="audit-balance-text" class="text-xs sm:text-sm text-emerald-900 mt-0.5 font-semibold">
+                <div id="audit-balance-text" class="text-sm text-emerald-900 mt-0.5 font-semibold">
                   0 Suara Sah Tercatat = 0 Struk Audit (Seimbang 100%)
                 </div>
               </div>
@@ -1097,7 +1109,7 @@
               <label class="block text-xs font-bold text-slate-700 mb-1.5">
                 Verifikasi Keaslian Token Struk Audit (Tanpa Membocorkan Identitas Pemilih)
               </label>
-              <div class="flex flex-col sm:flex-row gap-2">
+              <div class="flex gap-2">
                 <input
                   type="text"
                   id="audit-verify-input"
@@ -1126,12 +1138,12 @@
           <!-- TAB 4: PENGATURAN TPS, KANDIDAT & PIN PANITIA -->
           <div id="admin-tab-settings" class="hidden space-y-6">
             <!-- Pengaturan Identitas TPS & Jadwal -->
-            <form onsubmit="handleSaveElectionSettings(event)" class="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+            <form onsubmit="handleSaveElectionSettings(event)" class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
               <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
-                <h4 class="font-extrabold text-slate-900 text-sm sm:text-base">Identitas TPS, Bilik &amp; Jadwal Pemungutan Suara</h4>
+                <h4 class="font-extrabold text-slate-900 text-base">Identitas TPS, Bilik &amp; Jadwal Pemungutan Suara</h4>
                 <span class="text-[11px] font-semibold text-slate-500">Tampil pada Struk &amp; Undangan</span>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div class="grid grid-cols-2 gap-3.5">
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1">Nomor TPS</label>
                   <input type="text" id="set-tps" required class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm font-semibold focus:outline-none focus:border-blue-600" />
@@ -1148,25 +1160,25 @@
                   <label class="block text-xs font-bold text-slate-700 mb-1">Waktu Pemungutan Suara</label>
                   <input type="text" id="set-time" required class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:border-blue-600" />
                 </div>
-                <div class="sm:col-span-2">
+                <div class="col-span-2">
                   <label class="block text-xs font-bold text-slate-700 mb-1">Alamat Lokasi TPS</label>
                   <input type="text" id="set-address" required class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:border-blue-600" />
                 </div>
               </div>
               <div class="flex justify-end">
-                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-xs transition cursor-pointer">
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer">
                   Simpan Pengaturan TPS
                 </button>
               </div>
             </form>
 
             <!-- Pengaturan Nama 4 Kandidat -->
-            <form onsubmit="handleSaveCandidatesSettings(event)" class="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+            <form onsubmit="handleSaveCandidatesSettings(event)" class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
               <div class="border-b border-slate-200 pb-2.5">
-                <h4 class="font-extrabold text-slate-900 text-sm sm:text-base">Daftar Nama 4 Calon Kepala Desa Gembor</h4>
+                <h4 class="font-extrabold text-slate-900 text-base">Daftar Nama 4 Calon Kepala Desa Gembor</h4>
                 <p class="text-xs text-slate-500">Perubahan nama langsung diperbarui pada Surat Suara Digital &amp; Berita Acara C1</p>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div class="grid grid-cols-2 gap-3.5">
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1">Calon Nomor Urut 1</label>
                   <input type="text" id="set-cand-1" required class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm font-bold uppercase focus:outline-none focus:border-blue-600" />
@@ -1185,14 +1197,14 @@
                 </div>
               </div>
               <div class="flex justify-end">
-                <button type="submit" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm transition cursor-pointer">
+                <button type="submit" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition cursor-pointer">
                   Simpan Nama Kandidat
                 </button>
               </div>
             </form>
 
             <!-- Ubah PIN Akses Panel Panitia -->
-            <form onsubmit="handleChangeAdminPin(event)" class="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+            <form onsubmit="handleChangeAdminPin(event)" class="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 flex items-end justify-between gap-3">
               <div class="flex-1">
                 <label class="block text-xs font-extrabold text-amber-950 mb-1">Ubah PIN Keamanan Panel Panitia (4–8 Digit Angka)</label>
                 <input
@@ -1203,26 +1215,26 @@
                   maxlength="8"
                   required
                   placeholder="Masukkan PIN baru..."
-                  class="w-full sm:max-w-xs px-3 py-2 rounded-lg border border-amber-300 bg-white font-mono text-sm font-bold focus:outline-none focus:border-amber-600"
+                  class="w-full max-w-xs px-3 py-2 rounded-lg border border-amber-300 bg-white font-mono text-sm font-bold focus:outline-none focus:border-amber-600"
                 />
               </div>
-              <button type="submit" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs sm:text-sm transition cursor-pointer shrink-0">
+              <button type="submit" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm transition cursor-pointer shrink-0">
                 Perbarui PIN Panitia
               </button>
             </form>
 
-            <!-- Status & Pengaturan Sinkronisasi 2 Perangkat (Disimpan di Fitur Panitia) -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white border border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <!-- Status & Pengaturan Sinkronisasi 2 Perangkat -->
+            <div class="p-5 rounded-2xl bg-slate-900 text-white border border-slate-700 flex items-center justify-between gap-3">
               <div>
                 <div class="text-xs font-extrabold uppercase tracking-wider text-blue-300">Mode Koneksi &amp; Sinkronisasi 2 Perangkat</div>
-                <div id="settings-sync-status-text" class="text-xs sm:text-sm text-slate-200 mt-1 font-semibold">
+                <div id="settings-sync-status-text" class="text-sm text-slate-200 mt-1 font-semibold">
                   Mode Lokal (Belum terhubung ke Cloud Real-Time)
                 </div>
               </div>
               <button
                 type="button"
                 onclick="openSyncBridgeModal('cloud')"
-                class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm transition cursor-pointer shrink-0"
+                class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition cursor-pointer shrink-0"
               >
                 Atur Koneksi &amp; QR Sync
               </button>
@@ -1235,14 +1247,14 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL PUSAT SINKRONISASI 2 PERANGKAT (LAPTOP PANITIA <-> TABLET)      -->
+  <!-- MODAL PUSAT SINKRONISASI 2 PERANGKAT (LAPTOP PANITIA <-> TABLET/HP)   -->
   <!-- ===================================================================== -->
-  <div id="modal-sync-bridge" class="hidden fixed inset-0 z-[70] bg-black/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6">
+  <div id="modal-sync-bridge" class="hidden fixed inset-0 z-[70] bg-black/75 backdrop-blur-xs flex items-center justify-center p-6">
     <div class="bg-white text-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-fadeInScale">
       <!-- Header Modal Sync -->
-      <div class="px-5 sm:px-6 py-4 bg-slate-900 text-white flex items-center justify-between gap-3">
+      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between gap-3">
         <div>
-          <h3 class="text-base sm:text-lg font-extrabold">Pusat Sinkronisasi Laptop Panitia &amp; Tablet Pemilihan</h3>
+          <h3 class="text-lg font-extrabold">Pusat Sinkronisasi Laptop Panitia &amp; Perangkat Bilik</h3>
           <p class="text-xs text-slate-300">Hubungkan 2 perangkat secara Real-Time (Internet/Wi-Fi) atau Offline via QR Code</p>
         </div>
         <button type="button" onclick="closeSyncBridgeModal()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer">
@@ -1258,32 +1270,32 @@
           type="button"
           id="sync-tab-btn-cloud"
           onclick="switchSyncBridgeTab('cloud')"
-          class="px-4 py-3 text-xs sm:text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer"
+          class="px-4 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer"
         >
-1. Real-Time Otomatis (Wi-Fi / Internet)
+          1. Real-Time Otomatis (Wi-Fi / Internet)
         </button>
         <button
           type="button"
           id="sync-tab-btn-offline"
           onclick="switchSyncBridgeTab('offline')"
-          class="px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer"
+          class="px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer"
         >
-2. Transfer Cepat Tanpa Internet (QR / Kode Bilik)
+          2. Transfer Cepat Tanpa Internet (QR / Kode Bilik)
         </button>
       </div>
 
       <!-- Konten Modal Sync -->
-      <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-5">
+      <div class="p-6 overflow-y-auto flex-1 space-y-5">
         
         <!-- PANEL A: REAL-TIME CLOUD SYNC -->
         <div id="sync-panel-cloud" class="space-y-5">
-          <div id="sync-cloud-status-box" class="p-4 rounded-xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div id="sync-cloud-status-box" class="p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-2">
             <div>
-              <div id="sync-cloud-status-title" class="text-xs sm:text-sm font-extrabold text-amber-900">
+              <div id="sync-cloud-status-title" class="text-sm font-extrabold text-amber-900">
                 Status Saat Ini: Belum Terhubung ke Cloud (Mode Lokal)
               </div>
               <div id="sync-cloud-status-desc" class="text-xs text-amber-800 mt-0.5">
-                Isi Kode Ruang TPS &amp; Konfigurasi Firebase di bawah pada Laptop Panitia, lalu pindai QR Koneksi menggunakan Tablet.
+                Isi Kode Ruang TPS &amp; Konfigurasi Firebase di bawah pada Laptop Panitia, lalu pindai QR Koneksi menggunakan Tablet/HP.
               </div>
             </div>
             <span id="sync-cloud-room-pill" class="px-3 py-1 rounded-full bg-slate-900 text-white font-mono text-xs font-bold shrink-0">
@@ -1291,15 +1303,15 @@
             </span>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <div class="grid grid-cols-12 gap-5">
             <!-- Form Konfigurasi Firebase di Laptop Panitia -->
-            <form onsubmit="handleSaveCustomFirebaseConfig(event)" class="lg:col-span-7 p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3.5">
+            <form onsubmit="handleSaveCustomFirebaseConfig(event)" class="col-span-7 p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3.5">
               <div class="text-xs font-extrabold uppercase tracking-wider text-slate-800">
                 Langkah 1: Pengaturan Koneksi Cloud (Isi di Laptop Panitia)
               </div>
 
               <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Kode Ruang TPS (Wajib Sama di Laptop &amp; Tablet)</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Kode Ruang TPS (Wajib Sama di Semua Perangkat)</label>
                 <input
                   type="text"
                   id="sync-room-id-input"
@@ -1324,10 +1336,10 @@
                 </p>
               </div>
 
-              <div class="flex flex-wrap items-center gap-2 pt-1">
+              <div class="flex items-center gap-2 pt-1">
                 <button
                   type="submit"
-                  class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs sm:text-sm shadow-xs transition cursor-pointer"
+                  class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-xs transition cursor-pointer"
                 >
                   Simpan &amp; Hubungkan Cloud
                 </button>
@@ -1341,18 +1353,18 @@
               </div>
             </form>
 
-            <!-- QR Pairing untuk Tablet -->
-            <div class="lg:col-span-5 p-4 rounded-2xl bg-blue-50/70 border border-blue-200 flex flex-col items-center justify-between text-center space-y-3">
+            <!-- QR Pairing untuk Tablet/HP -->
+            <div class="col-span-5 p-4 rounded-2xl bg-blue-50/70 border border-blue-200 flex flex-col items-center justify-between text-center space-y-3">
               <div>
                 <div class="text-xs font-extrabold uppercase tracking-wider text-blue-900">
-                  Langkah 2: Hubungkan Tablet Sekali Pindai
+                  Langkah 2: Hubungkan Perangkat Bilik Sekali Pindai
                 </div>
                 <p class="text-[11px] text-slate-600 mt-1">
-                  Buka aplikasi ini di <strong>Tablet</strong> (kamera langsung standby di layar utama), lalu arahkan ke QR Code di bawah ini:
+                  Buka aplikasi ini di <strong>Tablet/HP</strong> (kamera langsung standby di layar utama), lalu arahkan ke QR Code di bawah ini:
                 </p>
               </div>
 
-              <div id="sync-pairing-qr-box" onclick="openQrZoomModal()" title="Klik untuk memperbesar QR Code" class="w-52 h-52 sm:w-56 sm:h-56 p-2.5 bg-white rounded-xl border-2 border-blue-400 shadow-sm flex items-center justify-center cursor-pointer hover:border-blue-600 transition">
+              <div id="sync-pairing-qr-box" onclick="openQrZoomModal()" title="Klik untuk memperbesar QR Code" class="w-56 h-56 p-2.5 bg-white rounded-xl border-2 border-blue-400 shadow-sm flex items-center justify-center cursor-pointer hover:border-blue-600 transition">
                 <!-- QR Konfigurasi otomatis dirender JS -->
               </div>
 
@@ -1369,10 +1381,10 @@
                   onclick="copyPairingLinkToClipboard()"
                   class="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition cursor-pointer"
                 >
-                  Salin Link Koneksi Tablet
+                  Salin Link Koneksi Perangkat
                 </button>
                 <p class="text-[10px] text-slate-500">
-                  Atau buka link tersebut langsung di browser Tablet.
+                  Atau buka link tersebut langsung di Chrome Tablet/HP.
                 </p>
               </div>
             </div>
@@ -1385,14 +1397,14 @@
             <strong>Mode Tanpa Internet (Offline):</strong> Gunakan fitur ini jika TPS tidak memiliki akses internet. Sistem otomatis mencegah suara ganda menggunakan token audit unik.
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <!-- Kolom Kiri: Kirim Data dari Tablet -->
+          <div class="grid grid-cols-2 gap-5">
+            <!-- Kolom Kiri: Kirim Data dari Perangkat Bilik -->
             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-3">
               <div class="text-xs font-extrabold uppercase tracking-wider text-slate-800">
-1. Dari Tablet (Bilik Suara) &rarr; Kirim Data
+                1. Dari Perangkat Bilik Suara &rarr; Kirim Data
               </div>
               <p class="text-[11px] text-slate-600">
-                Tampilkan QR Code ini di layar <strong>Tablet</strong> untuk dipindai oleh Laptop Panitia:
+                Tampilkan QR Code ini di layar <strong>Tablet/HP</strong> untuk dipindai oleh Laptop Panitia:
               </p>
 
               <div id="offline-export-qr-box" class="w-44 h-44 p-2 bg-white rounded-xl border-2 border-slate-300 shadow-xs flex items-center justify-center">
@@ -1421,15 +1433,15 @@
             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-3">
               <div class="space-y-2">
                 <div class="text-xs font-extrabold uppercase tracking-wider text-slate-800 text-center">
-2. Di Laptop (Panitia) &rarr; Terima Data Masuk
+                  2. Di Laptop (Panitia) &rarr; Terima Data Masuk
                 </div>
                 <p class="text-[11px] text-slate-600 text-center">
-                  Pindai QR Code dari layar Tablet menggunakan kamera Laptop, atau tempel kode paket di bawah:
+                  Pindai QR Code dari layar Tablet/HP menggunakan kamera Laptop, atau tempel kode paket di bawah:
                 </p>
 
                 <!-- Mini Kamera Scanner di Modal Panitia -->
                 <div class="relative rounded-xl overflow-hidden bg-slate-900 border border-slate-700 flex flex-col items-center justify-center min-h-[140px]">
-                  <video id="sync-qr-video" class="hidden w-full h-44 object-cover" autoplay playsinline muted></video>
+                  <video id="sync-qr-video" class="hidden w-full h-44 object-cover" autoplay playsinline webkit-playsinline muted></video>
                   <canvas id="sync-qr-canvas" class="hidden"></canvas>
                   <div id="sync-qr-placeholder" class="p-4 text-center space-y-2">
                     <button
@@ -1438,15 +1450,15 @@
                       onclick="toggleSyncQrCamera()"
                       class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition cursor-pointer"
                     >
-                      Buka Kamera Laptop (Scan QR Tablet)
+                      Buka Kamera Laptop (Scan QR Bilik)
                     </button>
-                    <div class="text-[10px] text-slate-400">Arahkan QR dari layar Tablet ke kamera Laptop</div>
+                    <div class="text-[10px] text-slate-400">Arahkan QR dari layar Tablet/HP ke kamera Laptop</div>
                   </div>
                 </div>
               </div>
 
               <div class="space-y-2">
-                <label class="block text-[11px] font-bold text-slate-700">Atau Tempel Kode Paket Data dari Tablet:</label>
+                <label class="block text-[11px] font-bold text-slate-700">Atau Tempel Kode Paket Data dari Perangkat Bilik:</label>
                 <textarea
                   id="incoming-sync-code-input"
                   rows="2"
@@ -1456,7 +1468,7 @@
                 <button
                   type="button"
                   onclick="handleImportOfflineSyncCode()"
-                  class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-xs transition cursor-pointer"
+                  class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-xs transition cursor-pointer"
                 >
                   Gabungkan Data Pemilih Masuk
                 </button>
@@ -1470,7 +1482,7 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL PERBESAR QR CODE KONEKSI (LAYAR PENUH AGAR MUDAH DISCAN TABLET)  -->
+  <!-- MODAL PERBESAR QR CODE KONEKSI (LAYAR PENUH AGAR MUDAH DISCAN)         -->
   <!-- ===================================================================== -->
   <div id="modal-qr-zoom" class="hidden fixed inset-0 z-[80] bg-black/85 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white text-slate-900 rounded-3xl shadow-2xl max-w-md w-full p-6 text-center space-y-4 animate-fadeInScale">
@@ -1478,13 +1490,13 @@
         <span class="inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-extrabold text-xs uppercase tracking-wider">
           QR Koneksi Perangkat TPS
         </span>
-        <h4 class="text-lg font-black text-slate-900 mt-1.5">Arahkan Kamera Tablet ke Sini</h4>
+        <h4 class="text-lg font-black text-slate-900 mt-1.5">Arahkan Kamera Tablet/HP ke Sini</h4>
         <p class="text-xs text-slate-600 mt-0.5">
-          Kamera pada layar utama Tablet langsung standby untuk memindai kode QR ini.
+          Kamera pada layar utama langsung standby untuk memindai kode QR ini.
         </p>
       </div>
 
-      <div id="qr-zoom-container" class="w-72 h-72 sm:w-80 sm:h-80 mx-auto p-3 bg-white border-2 border-slate-900 rounded-2xl shadow-inner flex items-center justify-center">
+      <div id="qr-zoom-container" class="w-80 h-80 mx-auto p-3 bg-white border-2 border-slate-900 rounded-2xl shadow-inner flex items-center justify-center">
         <!-- QR Zoom dirender JS -->
       </div>
 
@@ -1510,7 +1522,6 @@
   <script>
     // =========================================================================
     // KONFIGURASI FILE FOTO & LOGO LOKAL (TARUH DALAM 1 FOLDER BERSAMA HTML INI)
-    // Ganti nama file di bawah ini sesuai nama file gambar di folder Anda
     // =========================================================================
     const LOCAL_ASSETS = {
       logo: 'logoss.jpg',       // Logo untuk header scanner, panel panitia & surat undangan
@@ -1872,7 +1883,7 @@
         container.style.backgroundImage = `url('${LOCAL_ASSETS.background}'), var(--ballot-ornament)`;
         const probeImg = new Image();
         probeImg.onload = function () {
-          if (probeImg.naturalWidth > 0 && probeImg.naturalHeight > 0 && window.innerWidth >= 768) {
+          if (probeImg.naturalWidth > 0 && probeImg.naturalHeight > 0) {
             container.style.aspectRatio = `${probeImg.naturalWidth} / ${probeImg.naturalHeight}`;
           } else {
             container.style.aspectRatio = '';
@@ -1912,16 +1923,16 @@
 
         if (isSelected) {
           card.className = 'kandidat-card bg-white rounded-xl overflow-hidden border-[2.5px] border-blue-600 ring-4 ring-blue-500/35 shadow-2xl scale-[1.02] flex flex-col cursor-pointer group relative';
-          if (numBox) numBox.className = 'bg-blue-600 text-white font-black text-xl sm:text-2xl py-1 sm:py-1.5 text-center border-b-[2.5px] border-blue-600 leading-none transition-colors';
-          if (nameBox) nameBox.className = 'bg-blue-50 py-1.5 px-1.5 text-center border-t-[2.5px] border-blue-600 text-blue-950 flex-grow flex items-center justify-center min-h-[44px] sm:min-h-[48px] transition-colors';
+          if (numBox) numBox.className = 'bg-blue-600 text-white font-black text-2xl py-1.5 text-center border-b-[2.5px] border-blue-600 leading-none transition-colors';
+          if (nameBox) nameBox.className = 'bg-blue-50 py-1.5 px-1.5 text-center border-t-[2.5px] border-blue-600 text-blue-950 flex-grow flex items-center justify-center min-h-[48px] transition-colors';
           if (badgeEl) {
             badgeEl.classList.remove('hidden');
             badgeEl.classList.add('flex');
           }
         } else {
           card.className = 'kandidat-card bg-white rounded-xl overflow-hidden border-[2.5px] border-gray-900 shadow-md hover:shadow-xl flex flex-col cursor-pointer group relative';
-          if (numBox) numBox.className = 'bg-white text-black font-black text-xl sm:text-2xl py-1 sm:py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none transition-colors';
-          if (nameBox) nameBox.className = 'bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 text-gray-900 flex-grow flex items-center justify-center min-h-[44px] sm:min-h-[48px] transition-colors';
+          if (numBox) numBox.className = 'bg-white text-black font-black text-2xl py-1.5 text-center border-b-[2.5px] border-gray-900 leading-none transition-colors';
+          if (nameBox) nameBox.className = 'bg-white py-1.5 px-1.5 text-center border-t-[2.5px] border-gray-900 text-gray-900 flex-grow flex items-center justify-center min-h-[48px] transition-colors';
           if (badgeEl) {
             badgeEl.classList.add('hidden');
             badgeEl.classList.remove('flex');
@@ -2021,7 +2032,7 @@
       const toast = document.createElement('div');
       toast.className = `pointer-events-auto p-3.5 rounded-xl border-l-4 shadow-2xl backdrop-blur-md animate-fadeInScale ${colors[variant] || colors.info}`;
       toast.innerHTML = `
-        <div class="font-extrabold text-xs sm:text-sm">${title}</div>
+        <div class="font-extrabold text-sm">${title}</div>
         <div class="text-xs text-slate-200 mt-0.5 leading-snug">${message}</div>
       `;
       container.appendChild(toast);
@@ -2217,18 +2228,18 @@
         }
         if (barDot) barDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
         if (barTitle) {
-          barTitle.className = 'text-xs sm:text-sm font-extrabold uppercase tracking-wide text-emerald-300';
+          barTitle.className = 'text-sm font-extrabold uppercase tracking-wide text-emerald-300';
           barTitle.textContent = `Sinkronisasi 2 Perangkat: TERHUBUNG REAL-TIME (${cloudState.roomId})`;
         }
         if (barDesc) {
-          barDesc.textContent = 'Suara yang masuk dari Tablet Bilik Suara otomatis disinkronkan secara real-time ke Laptop Panitia.';
+          barDesc.textContent = 'Suara yang masuk dari perangkat bilik suara otomatis disinkronkan secara real-time ke Laptop Panitia.';
         }
         if (settingsText) {
           settingsText.textContent = `Terhubung Cloud Real-Time • Kode Ruang: ${cloudState.roomId}`;
         }
-        if (box) box.className = 'p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2';
+        if (box) box.className = 'p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-2';
         if (boxTitle) {
-          boxTitle.className = 'text-xs sm:text-sm font-extrabold text-emerald-900';
+          boxTitle.className = 'text-sm font-extrabold text-emerald-900';
           boxTitle.textContent = `Status Saat Ini: TERHUBUNG REAL-TIME (${cloudState.roomId})`;
         }
         if (boxDesc) {
@@ -2241,23 +2252,23 @@
         }
         if (barDot) barDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
         if (barTitle) {
-          barTitle.className = 'text-xs sm:text-sm font-extrabold uppercase tracking-wide text-amber-300';
+          barTitle.className = 'text-sm font-extrabold uppercase tracking-wide text-amber-300';
           barTitle.textContent = 'Sinkronisasi 2 Perangkat: Mode Lokal';
         }
         if (barDesc) {
-          barDesc.textContent = 'Agar suara dari Tablet otomatis masuk ke Laptop ini, hubungkan Cloud Real-Time atau terima paket data QR dari Tablet.';
+          barDesc.textContent = 'Agar suara dari Tablet/HP otomatis masuk ke Laptop ini, hubungkan Cloud Real-Time atau terima paket data QR dari perangkat bilik.';
         }
         if (settingsText) {
           settingsText.textContent = 'Mode Lokal (Belum terhubung ke Cloud Real-Time)';
         }
-        if (box) box.className = 'p-4 rounded-xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2';
+        if (box) box.className = 'p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-2';
         if (boxTitle) {
-          boxTitle.className = 'text-xs sm:text-sm font-extrabold text-amber-900';
+          boxTitle.className = 'text-sm font-extrabold text-amber-900';
           boxTitle.textContent = 'Status Saat Ini: Belum Terhubung ke Cloud (Mode Lokal)';
         }
         if (boxDesc) {
           boxDesc.className = 'text-xs text-amber-800 mt-0.5';
-          boxDesc.textContent = 'Isi Kode Ruang TPS & Konfigurasi Firebase di bawah pada Laptop Panitia, lalu pindai QR Koneksi menggunakan Tablet.';
+          boxDesc.textContent = 'Isi Kode Ruang TPS & Konfigurasi Firebase di bawah pada Laptop Panitia, lalu pindai QR Koneksi menggunakan Tablet/HP.';
         }
       }
     }
@@ -2418,14 +2429,14 @@
       if (tab === 'cloud') {
         pCloud.classList.remove('hidden');
         pOffline.classList.add('hidden');
-        bCloud.className = 'px-4 py-3 text-xs sm:text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer';
-        bOffline.className = 'px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer';
+        bCloud.className = 'px-4 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer';
+        bOffline.className = 'px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer';
         stopSyncQrCamera();
       } else {
         pCloud.classList.add('hidden');
         pOffline.classList.remove('hidden');
-        bOffline.className = 'px-4 py-3 text-xs sm:text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer';
-        bCloud.className = 'px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer';
+        bOffline.className = 'px-4 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer';
+        bCloud.className = 'px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer';
         renderSyncQrCodes();
       }
     }
@@ -2466,7 +2477,7 @@
         cloudState.config = parsedCfg;
         initCloudSync();
         renderSyncQrCodes();
-        showToast('Konfigurasi Cloud Disimpan', `Menghubungkan ke ruang ${roomId}. Silakan pindai QR Koneksi dari Tablet.`, 'success');
+        showToast('Konfigurasi Cloud Disimpan', `Menghubungkan ke ruang ${roomId}. Silakan pindai QR Koneksi dari Tablet/HP.`, 'success');
       } catch (err) {
         showToast('Format Konfigurasi Salah', 'Pastikan konfigurasi Firebase berupa JSON valid dengan apiKey dan projectId.', 'error');
       }
@@ -2532,7 +2543,7 @@
       const b64 = encodeUtf8Base64(JSON.stringify({ roomId: cloudState.roomId, config: cloudState.config || {} }));
       const baseUrl = window.location.href.split('?')[0];
       const fullLink = `${baseUrl}?sync=${encodeURIComponent(b64)}`;
-      copyTextFallback(fullLink, 'Link Koneksi Disalin', 'Buka tautan ini di browser Tablet untuk langsung terhubung.');
+      copyTextFallback(fullLink, 'Link Koneksi Disalin', 'Buka tautan ini di Chrome Tablet/HP untuk langsung terhubung.');
     }
 
     function copyOfflineSyncCode() {
@@ -2598,7 +2609,7 @@
     function handleImportOfflineSyncCode() {
       const input = document.getElementById('incoming-sync-code-input');
       if (!input || !input.value.trim()) {
-        showToast('Input Kosong', 'Tempel kode paket data dari Tablet terlebih dahulu.', 'warning');
+        showToast('Input Kosong', 'Tempel kode paket data dari perangkat bilik terlebih dahulu.', 'warning');
         return;
       }
       if (mergeIncomingSyncData(input.value.trim())) {
@@ -2614,7 +2625,10 @@
         return;
       }
       try {
-        syncCamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        syncCamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.muted = true;
         video.srcObject = syncCamStream;
         await video.play();
         video.classList.remove('hidden');
@@ -2705,7 +2719,7 @@
     }
 
     // =========================================================================
-    // LAYAR 1: PEMINDAI QR CODE (STANDBY OTOMATIS, WEBCAM & SIMULASI DPT)
+    // LAYAR 1: PEMINDAI QR CODE (STANDBY OTOMATIS ANDROID & iOS CHROME)
     // =========================================================================
     function bindTapToActivateCameraFallback() {
       const scannerEl = document.getElementById('screen-scanner');
@@ -2758,7 +2772,6 @@
           stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
         }
 
-        // Jika pengguna sudah pindah dari layar scanner saat kamera masih loading, matikan stream
         const isScannerVisible = !document.getElementById('screen-scanner').classList.contains('hidden');
         if (!isScannerVisible) {
           stream.getTracks().forEach(t => t.stop());
@@ -2767,6 +2780,9 @@
         }
 
         cameraStream = stream;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.muted = true;
         video.srcObject = cameraStream;
         await video.play();
         video.classList.remove('hidden');
@@ -2786,7 +2802,7 @@
         if (!isAutoStart) {
           showToast(
             'Kamera Tidak Tersedia',
-            'Pastikan halaman diakses melalui HTTPS/localhost dan izin kamera diizinkan pada browser, atau gunakan tombol "Simulasi Scan QR Undangan".',
+            'Pastikan halaman diakses melalui HTTPS/localhost dan izin kamera diizinkan pada Chrome, atau gunakan tombol "Simulasi Scan QR Undangan".',
             'warning'
           );
         }
@@ -2847,7 +2863,6 @@
         return;
       }
 
-      // Jangan memindai dari kamera belakang jika modal panitia/simulasi sedang terbuka
       const isModalOpen =
         !document.getElementById('modal-sim-qr').classList.contains('hidden') ||
         !document.getElementById('modal-admin').classList.contains('hidden') ||
@@ -2873,11 +2888,9 @@
       ctx.drawImage(video, 0, 0, vw, vh);
 
       if (typeof jsQR === 'function' && !isScanningCooldown) {
-        // 1. Pindai frame penuh
         const fullData = ctx.getImageData(0, 0, vw, vh);
         let code = jsQR(fullData.data, vw, vh, { inversionAttempts: 'attemptBoth' });
 
-        // 2. Jika belum terbaca, pindai area tengah kotak hijau viewfinder
         if (!code) {
           const cropSize = Math.floor(Math.min(vw, vh) * 0.65);
           const sx = Math.floor((vw - cropSize) / 2);
@@ -2901,7 +2914,6 @@
     function processScannedQrPayload(qrPayload) {
       const trimmed = String(qrPayload || '').trim();
 
-      // Cek apakah QR adalah QR Koneksi Perangkat dari Laptop Panitia
       if (trimmed.startsWith('PILKADES-CONFIG|')) {
         try {
           const b64 = trimmed.slice('PILKADES-CONFIG|'.length);
@@ -2914,7 +2926,7 @@
             cloudState.config = cfg;
             initCloudSync();
             playSound('beep');
-            showToast('Perangkat Terhubung!', `Tablet berhasil terhubung ke Ruang TPS ${roomId}.`, 'success');
+            showToast('Perangkat Terhubung!', `Perangkat berhasil terhubung ke Ruang TPS ${roomId}.`, 'success');
           } else {
             showToast('QR Konfigurasi Kosong', 'Isi konfigurasi Firebase di Laptop Panitia terlebih dahulu sebelum memindai.', 'warning');
           }
@@ -2924,13 +2936,11 @@
         return;
       }
 
-      // Cek apakah QR adalah Paket Sinkronisasi Offline
       if (trimmed.startsWith('PILKADES-SYNC|')) {
         mergeIncomingSyncData(trimmed);
         return;
       }
 
-      // Pencocokan QR Undangan DPT Pemilih (Diizinkan untuk dipindai berulang kali)
       const voter = appState.voters.find(
         v => v.qrCode === trimmed || v.dptNo === trimmed || v.nik === trimmed
       );
@@ -3047,11 +3057,11 @@
     // =========================================================================
     function buildInvitationSheetHTML(voter) {
       return `
-        <div class="border-2 border-slate-800 p-5 sm:p-7 bg-white text-slate-900 max-w-xl mx-auto">
+        <div class="border-2 border-slate-800 p-7 bg-white text-slate-900 max-w-xl mx-auto">
           <div class="flex items-center justify-between border-b-2 border-slate-800 pb-3">
             <div class="w-12 h-14 shrink-0">${renderEmblemHTML()}</div>
             <div class="text-center px-2">
-              <div class="text-sm sm:text-base font-black uppercase leading-tight">
+              <div class="text-base font-black uppercase leading-tight">
                 SURAT UNDANGAN<br/>PEMUNGUTAN SUARA<br/>KEPADA PEMILIH
               </div>
             </div>
@@ -3061,13 +3071,13 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center my-5">
-            <div class="sm:col-span-5 flex justify-center">
+          <div class="grid grid-cols-12 gap-4 items-center my-5">
+            <div class="col-span-5 flex justify-center">
               <div class="p-2 border border-slate-300 bg-white w-28 h-28">
                 ${generateDeterministicQrSVG(voter.qrCode)}
               </div>
             </div>
-            <div class="sm:col-span-7 space-y-2.5">
+            <div class="col-span-7 space-y-2.5">
               <div class="border-2 border-red-600 text-red-700 font-extrabold text-xs text-center py-2 px-3 uppercase tracking-wide">
                 SURAT UNDANGAN INI BERSIFAT RAHASIA
               </div>
@@ -3077,7 +3087,7 @@
             </div>
           </div>
 
-          <div class="text-xs sm:text-sm leading-relaxed space-y-3">
+          <div class="text-sm leading-relaxed space-y-3">
             <p>
               Bersama ini diberitahukan bahwa Panitia Pemilihan mengundang Saudara/i
               <strong class="uppercase underline">${voter.name}</strong><br/>
@@ -3085,7 +3095,7 @@
               <strong class="uppercase">PEMILIHAN KEPALA DESA GEMBOR PERIODE TAHUN 2026 - 2034</strong> yang akan dilaksanakan pada:
             </p>
 
-            <table class="w-full text-xs sm:text-sm my-2">
+            <table class="w-full text-sm my-2">
               <tr>
                 <td class="py-1 w-36 font-medium">Hari/Tanggal</td>
                 <td class="py-1 font-bold">: ${ELECTION_META.dateText}</td>
@@ -3121,7 +3131,7 @@
 
       const scanBtn = document.getElementById('btn-scan-from-preview');
       scanBtn.textContent = 'Scan QR Ini Sekarang';
-      scanBtn.className = 'px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold shadow transition cursor-pointer';
+      scanBtn.className = 'px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow transition cursor-pointer';
       scanBtn.onclick = () => {
         closeInvitationPreview();
         closeSimModal();
@@ -3158,7 +3168,7 @@
     }
 
     // =========================================================================
-    // LAYAR 2: SURAT SUARA DIGITAL (4 KANDIDAT DESA GEMBOR)
+    // LAYAR 2: SURAT SUARA DIGITAL (4 KANDIDAT DESA GEMBOR SEJAJAR)
     // =========================================================================
     function openBallotForVoter(voter) {
       activeVoter = voter;
@@ -3191,7 +3201,7 @@
       if (selectedCandidateId) {
         btn.disabled = false;
         btn.className =
-          'w-full py-3 sm:py-3.5 rounded-xl font-extrabold text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white shadow-xl shadow-blue-600/30 cursor-pointer';
+          'w-full py-3.5 rounded-xl font-extrabold text-sm uppercase tracking-wider transition-all duration-200 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white shadow-xl shadow-blue-600/30 cursor-pointer';
         if (handGuide) {
           handGuide.classList.remove('hidden');
           handGuide.classList.add('flex');
@@ -3199,7 +3209,7 @@
       } else {
         btn.disabled = true;
         btn.className =
-          'w-full py-3 sm:py-3.5 rounded-xl font-extrabold text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 bg-slate-300 text-slate-500 cursor-not-allowed';
+          'w-full py-3.5 rounded-xl font-extrabold text-sm uppercase tracking-wider transition-all duration-200 bg-slate-300 text-slate-500 cursor-not-allowed';
         if (handGuide) {
           handGuide.classList.add('hidden');
           handGuide.classList.remove('flex');
@@ -3466,10 +3476,10 @@
         if (!panel || !btn) return;
         if (key === tabKey) {
           panel.classList.remove('hidden');
-          btn.className = 'admin-tab-btn px-4 py-3 text-xs sm:text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer';
+          btn.className = 'admin-tab-btn px-4 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap cursor-pointer';
         } else {
           panel.classList.add('hidden');
-          btn.className = 'admin-tab-btn px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer';
+          btn.className = 'admin-tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap cursor-pointer';
         }
       });
     }
@@ -3498,7 +3508,7 @@
         const row = document.createElement('div');
         row.className = 'space-y-1.5';
         row.innerHTML = `
-          <div class="flex items-center justify-between gap-2 text-xs sm:text-sm">
+          <div class="flex items-center justify-between gap-2 text-sm">
             <div class="flex items-center gap-2.5 min-w-0">
               <img
                 src="${getCandidateActiveImageSrc(cand)}"
@@ -3739,10 +3749,10 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
-          <td class="py-3 px-3 sm:px-4 font-extrabold text-slate-900">${voter.dptNo}</td>
-          <td class="py-3 px-3 sm:px-4 font-bold uppercase text-slate-800">${voter.name}</td>
-          <td class="py-3 px-3 sm:px-4 font-mono text-slate-600">${voter.nik}</td>
-          <td class="py-3 px-3 sm:px-4">
+          <td class="py-3 px-4 font-extrabold text-slate-900">${voter.dptNo}</td>
+          <td class="py-3 px-4 font-bold uppercase text-slate-800">${voter.name}</td>
+          <td class="py-3 px-4 font-mono text-slate-600">${voter.nik}</td>
+          <td class="py-3 px-4">
             ${
               voter.hasVoted
                 ? `<div>
@@ -3752,7 +3762,7 @@
                 : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Belum Memilih</span>`
             }
           </td>
-          <td class="py-3 px-3 sm:px-4 text-right space-x-1.5 whitespace-nowrap">
+          <td class="py-3 px-4 text-right space-x-1.5 whitespace-nowrap">
             <button
               type="button"
               onclick="openInvitationPreview('${voter.dptNo}')"
@@ -3829,7 +3839,7 @@
       container.innerHTML = '';
       appState.auditLogs.forEach(log => {
         const item = document.createElement('div');
-        item.className = 'p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-2 text-xs';
+        item.className = 'p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between gap-2 text-xs';
         item.innerHTML = `
           <div>
             <div class="font-mono font-bold text-slate-900">Token Struk: <span class="text-blue-700">${log.token}</span></div>
@@ -3945,7 +3955,7 @@
     function cancelInlineReset() {
       const wrapper = document.getElementById('reset-action-wrapper');
       wrapper.innerHTML = `
-        <button type="button" onclick="showInlineResetConfirm()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm transition cursor-pointer">
+        <button type="button" onclick="showInlineResetConfirm()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition cursor-pointer">
           Reset Simulasi
         </button>
       `;
